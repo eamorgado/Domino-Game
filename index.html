@@ -9,6 +9,8 @@
             <link rel="stylesheet" href="CSS/main.css" type="text/css">
             <link rel="stylesheet" href="CSS/overlay.css" type="text/css">
             <link rel="stylesheet" href="CSS/Login/login.css" type="text/css">
+            <link rel="stylesheet" href="CSS/versus.css" type="text/css">
+            <link rel="stylesheet" href="CSS/Game/game.css" type="text/css">
         <!--------------------------------------------------------------------->
 
         <!---------------------------Google Font:Roboto------------------------>
@@ -32,10 +34,18 @@
                                 <a><span onclick="showLogin();"><b>Login</b></span></a>
                             </nav>
                         </header>
-                        <img src="Assets/background.png" alt="Domino Background" width="100%" height="100%">
-                    <!--------------------------------------------------------->
+                    <div class="row">
+                        <div class="column" id="human-human">
+                            <span id="h-h-normal"><img src="Assets/human_human.png" width="90%" alt="Human vs Computer"></span>
+                            <span id="h-h-hover" onclick="openMenu('human-page');"><img id="human-ai-img" src="Assets/human_human-intense.png" width="90%" alt="Human vs Computer"></span>
+                        </div>
+                        <img class="domino-center" src="Assets/background.png" alt="Background Domino">
+                        <div class="column" id="human-ai">
+                            <span id="h-a-normal"><img src="Assets/human_ai.jpg" width="90%" alt="Human vs Computer"></span>
+                            <span id="h-a-hover" onclick="openMenu('ai-page');"><img src="Assets/human_ai-intense.jpg" width="90%" alt="Human vs Computer"></span>
+                        </div>
+                    </div>
                 </div>
-                <br>
                 <footer id="copy"><b>&copy;2019 Eduardo Morgado</b></footer>
             </div>
         <!--------------------------------------------------------------------->
@@ -129,8 +139,53 @@
         <!-----------------LeaderBoard Page------------------------------------>
             <div id="leader-page" class="overlay">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('leader-page')">&times;</a>
-                <div class="overlay-instructions">
+                <div class="overlay-content">
                 This is the LeaderBoard
+                </div>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------Human vs AI----------------------------------------->
+            <div id="ai-page" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('ai-page')">&times;</a>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" id="new-game" onclick="newGame();">New Game</button>
+                        <button type="button" id="quit-game" onclick="quitGame();">Quit Game</button>
+                    </div>
+                    <!--
+
+                        <form name="gameboard" style="text-align: center; display:none;">
+                        <table width="100%"cellspacing="5%" cellpadding="10%">
+                            <tbody>
+                                <tr>
+                                                                      
+                                </tr>
+                                <tr>
+                                                                       
+                                </tr>
+                                <tr>
+                                                                       
+                                </tr>
+                                <tr>
+                                                                       
+                                </tr>
+                            </tbody> 
+                        </table>
+                    </form>
+
+                    -->
+                </div>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------Human vs Human-------------------------------------->
+            <div id="human-page" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('human-page')">&times;</a>
+                <div class="overlay-instructions">
+                    <span style="text-align:center; width: 50%; color:whitesmoke; border:2px solid #444; border-radius:25%; background-color:#444;">Page Under Construction</span>
                 </div>
             </div>
         <!--------------------------------------------------------------------->
@@ -153,7 +208,7 @@
                         <label for="psw"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="psw" required>
 
-                        <button type="submit">Login</button>
+                        <button class= "submit" type="submit">Login</button>
                         <label>
                             <input type="checkbox" checked="checked" name="remember">Remember me
                         </label>
@@ -190,7 +245,7 @@
                         <label for="psw"><b>Password</b></label>
                         <input type="password" placeholder="Enter Password" name="psw" required>
 
-                        <button type="submit">Sing Up</button>
+                        <button class= "submit" type="submit">Sing Up</button>
                         <label>
                             <input type="checkbox" checked="checked" name="remember">Remember me
                         </label>
@@ -202,10 +257,12 @@
                 </form>
             </div>
         <!--------------------------------------------------------------------->
-
+        
 
         <!---------------------------Scripts----------------------------------->
         <script src="Script/Menus/NavMenus.js"></script><!--"redirects"-->
         <script src="Script/Menus/collapsible.js"></script>
+        <script src="Script/GameOptions.js"></script>
+        <script src="Script/Domino.js"></script>
     </body>
 </html>

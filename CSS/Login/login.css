@@ -1,5 +1,5 @@
 /* Bordered form */
-form {
+form.login-modal-content {
     border: 3px solid #F9C426;
 }
   
@@ -13,8 +13,8 @@ form {
     box-sizing: border-box;
   }
   
-  /* Set a style for all buttons */
-  button {
+  
+  button.submit {
     background-color: #F9C426;
     color: #444;
     padding: 14px 20px;
@@ -24,7 +24,7 @@ form {
     width: 100%;
   }
   
-  /* Add a hover effect for buttons */
+  
   button:hover {
     opacity: 0.8;
   }

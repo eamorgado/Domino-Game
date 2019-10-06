@@ -20,7 +20,7 @@
                 Overlay Content
 ------------------------------------------------------------------------------*/
 .overlay-content{
-    color: whitesmoke;
+    color: #444;
     position: relative;
     top: 25%;
     width: 100%;
