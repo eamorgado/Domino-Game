@@ -1,3 +1,8 @@
+/*------------------------------------------------------------------------------
+This file  is responsible for generating the pieces and controlling the game
+    options as well as the 
+------------------------------------------------------------------------------*/
+//Array of pieces id
 var pieces = new Array("DM-0-0","DM-0-1","DM-0-2","DM-0-3", "DM-0-4","DM-0-5", "DM-0-6",
         "DM-1-1","DM-1-2","DM-1-3","DM-1-4","DM-1-5","DM-1-6",
         "DM-2-2","DM-2-3","DM-2-4","DM-2-5","DM-2-6",
@@ -6,11 +11,11 @@ var pieces = new Array("DM-0-0","DM-0-1","DM-0-2","DM-0-3", "DM-0-4","DM-0-5", "
         "DM-5-5","DM-5-6",
         "DM-6-6");
 
+
 function createPiece(id, add_onclick,left,right){
     var path = 'Assets/DominoPieces/';
     var img = document.createElement('img');
-    img.src = path + 'DM-Flip.png';
-    
+    img.src = path + id + '.png';    
        
     var span_piece = document.createElement('span');
         span_piece.setAttribute('class','DM-flipped');        
@@ -20,6 +25,7 @@ function createPiece(id, add_onclick,left,right){
         span_piece.style.marginLeft = left + 'px';
         span_piece.style.marginRight = right + 'px';
         if(add_onclick){
+            img.src = path + 'DM-Flip.png';
             var onclick = span_piece.getAttribute('onclick');
             span_piece.onclick = function(){
                 if(span_piece.className == 'DM-flipped'){
@@ -54,7 +60,6 @@ function generateHtml(receiver, content){
     //function to generate html code
     var html = new DOMParser().parseFromString(content, "text/html");
     receiver.appendChild(html.body.childNodes[0]);
-    
 }
 
 
@@ -75,59 +80,163 @@ function closeInfo(option){
     if(option){
         var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
         game_page.removeChild(document.getElementById('loader'));
-        
     }
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "visible";
     var child = document.getElementById("info-popup");
     var parent = child.parentNode;
     parent.removeChild(child);
+    document.getElementById('ai-page').style.overflowY = 'auto';
+    //generateBoard();
+}
+var tbl;
 
+function generateBoard(){
+    /**
+     * For now it only is a simple table 28x28
+     *
+    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+    tbl = document.createElement('table');
+        tbl.style.width = '100%';
+        tbl.style.height = '100%';
+        tbl.setAttribute('border', '1');
+        tbl.setAttribute('id', 'table-game');
+        var tbdy = document.createElement('tbody');
+            for (var i = 0; i < 7; i++) { //table with 3 columns
+                var tr = document.createElement('tr');
+                for (var j = 0; j < 7; j++) {
+                    var td = document.createElement('td');
+                    td.appendChild(document.createTextNode('\u0020'))
+                    tr.appendChild(td)
+                }
+                tbdy.appendChild(tr);
+            }
+            tbl.appendChild(tbdy);
+    game_page.appendChild(tbl);
+    givePieces(tbl.firstChild.childNodes[1].firstChild, new Array("DM-0-6"), false, 0,0);*/
+    var str = "<form id=\"board\" style=\"display: inline-block;\" width=\"100%\" height=\"100%\">"
+                + "<p aling=\"center\">"
+                    + "<table border=\"0\" cellspacing=\"0\" cellpading=\"0\">"
+                        + "<tbody>"
+                            + "<tr>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                            + "</tr>"
+                            + "<tr>"
+                                + "<td align=\"left\">"
+                                    + "<table width=\"30\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"
+                                        + "<tbody>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                        + "</tbody>"
+                                    + "</table>"
+                                + "</td>"
+                                + "<td align=\"middle\">"
+                                    + "<table>"
+                                        + "<tbody>"
+                                            + "<tr>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                                + "<td with=\"120\"></td>"
+                                            + "</tr>"
+                                        + "</tbody>"
+                                    + "</table>"
+                                + "</td>"
+                                + "<td align=\"left\">"
+                                    + "<table width=\"30\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"
+                                        + "<tbody>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                            + "<tr></tr>"
+                                        + "</tbody>"
+                                    + "</table>"
+                                + "</td>"
+                            + "</tr>"
+                            + "<tr>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                                + "<td width=\"120\"></td>"
+                            + "</tr>"
+                        + "</tbody>"
+                    + "</table>"
+                + "</p>"
+            + "</form>";
+    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+    generateHtml(game_page,str);
+    
 }
 
+
 async function newGame(){
-    var ng = document.getElementById('new-game');
-    ng.style.display = 'none';
-    var qg = document.getElementById("quit-game");
-    qg.style.display = "inline-block";
+    //retrieve new-game node and hide it
+        var ng = document.getElementById('new-game');
+        ng.style.display = 'none';
+    //retrieve quit-game node and display it
+        var qg = document.getElementById("quit-game");
+        qg.style.display = "inline-block";
     
+    //get the overlay-content tree node
+        var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
     
-    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    
-    var loader = document.createElement('div');
-    loader.setAttribute('class', 'loader');
-    loader.setAttribute('id', 'loader');
-    game_page.appendChild(loader);
+    //create and append the loader circle
+        var loader = document.createElement('div');
+        loader.setAttribute('class', 'loader');
+        loader.setAttribute('id', 'loader');
+        game_page.appendChild(loader);
 
-    //givePieces(game_page, pieces, true, 5,5);
+            //givePieces(game_page, pieces, true, 5,5);
+            //await sleep(2000);
+    //overlap a information window
+        displayInfo(document.getElementById('ai-page'), 
+            "<p>"
+                + "This are all the game pieces, 28 in total"
+            + "</p>"
+            + "<p>"
+                + "As you can see they have two sides, a back side (the full black version) and a displayed side (with the dots or the single bar)"
+            + "</p>"
+            + "<p>"
+                + "Before the game starts they will be shuffled and each player will have 7 random initial pieces. The rest of them will remain in the stack"
+            + "</p>"
+            + "<p>"
+                + "You will be able to see your pieces but not your opponents or the stack's pieces. If you have the double sixes piece it is your turn to start"
+            + "</p>",true);
 
-    //await sleep(2000);
-    displayInfo(document.getElementById('ai-page'), 
-        "<p>"
-            + "This are all the game pieces, 28 in total"
-        + "</p>"
-        + "<p>"
-            + "As you can see they have two sides, a back side (the full black version) and a displayed side (with the dots or the single bar)"
-        + "</p>"
-        + "<p>"
-            + "Before the game starts they will be shuffled and each player will have 7 random initial pieces. The rest of them will remain in the stack"
-        + "</p>"
-        + "<p>"
-            + "You will be able to see your pieces but not your opponents or the stack's pieces. If you have the double sixes piece it is your turn to start"
-        + "</p>",
-    true);
-    givePieces(document.getElementById("info-cnt"), pieces, true, 5,5);
+    //add domino pieces to the info window
+        givePieces(document.getElementById("info-cnt"), pieces, true, 5,5);
+        document.getElementById('ai-page').style.overflowY = 'hidden';
+    await sleep(3000);
     pieces.forEach(async function(piece){
         var p = document.getElementById(piece);
         p.onclick.apply(p);
     });
-    await sleep(3000);
-    
 }
+
 
 function quitGame(){
     document.getElementById("quit-game").style.display = "none";
-    document.getElementById('new-game').style.display = 'inline-block'; 
-
+    document.getElementById('new-game').style.display = 'inline-block';
+    tbl.parentNode.removeChild(tbl);
 }
 
 

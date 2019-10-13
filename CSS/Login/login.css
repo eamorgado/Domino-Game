@@ -1,9 +1,15 @@
-/* Bordered form */
+/*------------------------------------------------------------------------------
+Css file to handle the styling of the login and register forms, those will
+  follow the modal style
+------------------------------------------------------------------------------*/
+
+
+/* setting the border of the form */
 form.login-modal-content {
     border: 3px solid #F9C426;
 }
   
-  /* Full-width inputs */
+  /* inputs styling */
   input[type=text], input[type=password], input[type=email] {
     width: 100%;
     padding: 12px 20px;
@@ -38,7 +44,7 @@ form.login-modal-content {
     border-radius: 12.5%;
   }
   
-  /* Center the avatar image inside this container */
+  /* Center the avatar image inside the container */
   .login-imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;

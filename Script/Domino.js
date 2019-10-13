@@ -1,31 +1,24 @@
 /*------------------------------------------------------------------------------
-                Functions for flipping pieces/ cheaacking flip
+                Functions for flipping pieces/ checking flip
 ------------------------------------------------------------------------------*/
 function flipPiece(piece){
     var elem = document.getElementById(piece);
-    var normal = elem.getElementsByClassName("DM-flipped")[0];
-    var displayed = elem.getElementsByClassName("DM-displayed")[0];
-    console.log("Flipped "+piece);
-    if(normal.style.display == 'inline-block'){
-        normal.style.display = 'none';
-        displayed.style.display = 'inline-block';
-        //Piece is now flipped
+    var path = 'Assets/DominoPieces/';
+    if(elem.className == 'DM-flipped'){
+        elem.firstChild.src = path + piece + '.png';
+        elem.className = 'DM-displayed';
         return false;
     }
     else{
-        normal.style.display = 'inline-block';
-        displayed.style.display = 'none';
-        //Piece is now flipped
+        elem.firstChild.src = path + 'DM-Flip.png';
+        elem.className = 'DM-flipped';
         return true;
     }
 }
 
 function checkFlipped(piece){
     var elem = document.getElementById(piece);
-    var normal = elem.getElementsByClassName("DM-flipped")[0];
-    var displayed = elem.getElementsByClassName("DM-displayed")[0];
-
-    return (((normal.style.display == 'inline-block') && (displayed.style.display == 'none'))? true : false);
+    return elem.className == 'DM-flipped';
 }
 
 
@@ -33,16 +26,9 @@ function checkFlipped(piece){
 
 /*------------------------------------------------------------------------------
                             Domino Class
-------------------------------------------------------------------------------*
+------------------------------------------------------------------------------*/
 class Domino{
     //Constructor for blank domino piece
-    constructor(){
-        this.rec1 = 0;
-        this.rec2 = 0;
-        this.flipped = false;
-        this.position = 'stack';
-        this.owner = 'stack';
-    }
     constructor(rec1, rec2, flipped, position, owner, img_id){
         this.rec1 = rec1;
         this.rec2 = rec2;
@@ -51,7 +37,7 @@ class Domino{
         this.owner = owner;
         this.img_id = img_id;
     }
-
+    getId(){return this.img_id;}
     getRec1(){
         return this.rec1;
     }
@@ -65,6 +51,7 @@ class Domino{
     
     getPoints(){return this.getRec1() + this.getRec2();}
 
+    newOwner(owner){this.owner = owner;}
     rotatePiece(side){
         var elem = document.getElementById(this.img_id);
         var piece = elem.getElementsByClassName("DM-flipped")[0];
@@ -86,11 +73,9 @@ class Domino{
         this.position = position;
         piece.style = 'transform: rotate('+angle+'deg)';
     }
-    flipPiece(){this.flipped = flipPiece(this.img_id);}
+    flipDomPiece(){this.flipped = flipPiece(this.img_id);}
 
-    equal(domino){return this.getPoints() == domino.getPoints();
-    
-    }
+    equal(domino){return this.getPoints() == domino.getPoints();}
 
     printVertical(){
         if(!this.isFlipped())

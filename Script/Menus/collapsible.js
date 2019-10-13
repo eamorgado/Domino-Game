@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-                    Script collapsible
+                    Script for the collapsible
 ------------------------------------------------------------------------------*/
 var coll = document.getElementsByClassName("ov-collapsible");
 for (var i = 0; i < coll.length; i++) {

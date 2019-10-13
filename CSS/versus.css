@@ -1,4 +1,11 @@
 /*------------------------------------------------------------------------------
+Css file to handle the styling of the gaming options, the human vs ai and the 
+    human vs human, those are images that will be treated as buttons, each
+    containing an animation
+------------------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------------------
                                 Sided images
 ------------------------------------------------------------------------------*/
 .row{
@@ -15,11 +22,11 @@
 
   
   /* Clear floats after image containers */
-  .row::after {
+.row::after {
     content: "";
     clear: both;
     display: table;
-  }
+}
 
 
 /*------------------------------------------------------------------------------
@@ -55,7 +62,7 @@ span[id="h-a-normal"] img, span[id="h-h-normal"] img, span[id="h-a-hover"] img, 
     border-radius: 25px;
 }
 
-@keyframes zoom {
+@keyframes zoom {/*This are the animation transitions*/
     0% { transform: scale(1); }
     10% { transform: scale(1.05);}
     20% { transform: scale(1.1); }
@@ -71,11 +78,9 @@ span[id="h-a-normal"] img, span[id="h-h-normal"] img, span[id="h-a-hover"] img, 
 
 
 /*------------------------------------------------------------------------------
+                                    Media for resizing
 ------------------------------------------------------------------------------*/
 @media screen and (max-width: 930px){
-    .domino-center{
-        
-    }
     span[id="h-a-normal"] img, span[id="h-h-normal"] img, span[id="h-a-hover"] img, span[id="h-h-hover"] img{
         width: 25vw;
         margin-top: 100px;
