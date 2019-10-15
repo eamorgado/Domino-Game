@@ -154,116 +154,152 @@
                         <button type="button" id="new-game" onclick="newGame();">New Game</button>
                         <button type="button" id="quit-game" onclick="quitGame();">Quit Game</button>
                     </div>
-                    <span width="100%" height="100%"">
-                        <table style="border:1px hidden black; text-align: center; width:100vw; height:50vh" cellspacing="0" cellpadding="0">
+                     <!--Adversary--
+                    <div style="overflow-x: auto;">
+                        <table>
                             <tbody>
-                                <!--Adversary-->
                                 <tr>
                                     <tr>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-Flip.png" width="20%"></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
                                     </tr>
                                     <th colspan="7" height="5%">His pieces</th>
                                 </tr>
-                                <!--Board-->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    
+                    <!--Board--
+                    <div style="overflow-x: auto;">
+                        <table class="board" cellspacing="0" cellpadding="0">
+                            <tbody>
                                 <tr>
-                                    <!--Stack-->
-                                    <td style="text-align: left; width:5%;" colspan="1">
-                                        <center>stack</center>
+                                    <!--Stack--
+                                    <td style="width:5%;" colspan="1">
+                                        <div style="overflow-y: auto;">
+                                            <table class="stack">
+                                                <tbody>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    <tr><img src="Assets/DominoPieces/DM-Flip.png" width="15vw"></tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </td>
-                                    <!--playing field-->
-                                    <td style="text-align: center; width:90%;" colspan="5">
-                                        <table width="100%" height=100%>
+                                    <!--playing field--
+                                    <td style="width:100%;">
+                                        <table class="board">
                                             <tbody>
                                                 <tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-5.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td><span style="font-size: 5vw">&#127080;</span></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-4.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td><img src="Assets/DominoPieces/DM-0-4.png" width="25vw"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-3.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-3.png" width="25vw"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-2.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-2.png" width="25vw"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr><tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-6.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-6.png" width="25vw"></td>
+                                                   <td></td>
+                                                   <td></td>
+                                                   <td></td>
+                                                   <td></td>
+                                                   <td></td>
+                                                   <td></td>
                                                 </tr><tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-1.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-1.png" width="25vw"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr><tr>
-                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-0.png" width="20%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
-                                                    <td width="5%" height="5%"></td>
+                                                    <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-0-0.png" width="25vw"></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </td>
-                                    <!--stats-->
+                                    <!--stats--
                                     <td style="text-align: right; width:5%;" colspan="1">
                                         <center>stat</center>
                                     </td>
                                 </tr>
-                                <!--Player-->
-                                <tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <tbody>
+                                <!--Player--                                <tr>
                                     <th colspan="7" height="5%">Your pieces</th>
                                     <tr>
-                                        <td width="5%" height="5%">a</td>
-                                        <td width="5%" height="5%">b</td>
-                                        <td width="5%" height="5%">c</td>
-                                        <td width="5%" height="5%"><img src="Assets/DominoPieces/DM-5-6.png" width="20%"></td>
-                                        <td width="5%" height="5%">e</td>
-                                        <td width="5%" height="5%">f</td>
-                                        <td width="5%" height="5%">g</td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
+                                        <td><span style="font-size: 5vw">&#127074;</span></td>
                                     </tr>
                                 </tr>
                             </tbody>
                         </table>
-                    </span>
+                    </div>-->
                 </div>
             </div>
         <!--------------------------------------------------------------------->

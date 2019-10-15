@@ -80,6 +80,9 @@ function closeInfo(option){
     if(option){
         var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
         game_page.removeChild(document.getElementById('loader'));
+        generatePlayerSide('AI');
+        generateGameBoard();
+        generatePlayerSide('Current');
     }
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "visible";
     var child = document.getElementById("info-popup");
@@ -88,8 +91,98 @@ function closeInfo(option){
     document.getElementById('ai-page').style.overflowY = 'auto';
     //generateBoard();
 }
-var tbl;
 
+
+function generatePlayerSide(player){
+    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+    var div = createTable('Player'+player,'');
+    var tbody = div.firstElementChild.firstElementChild;
+            var tr = document.createElement('tr');
+            for(var i = 0; i < 7; i++){
+                var td = document.createElement('td');
+                var span = document.createElement('span');
+                span.style.fontSize = '5vw';
+                span.innerHTML = span.textContent = "&#127074;";
+                td.appendChild(span);
+                tr.appendChild(td);
+            }
+        tbody.appendChild(tr);
+    game_page.appendChild(div);
+}
+
+function createTable(id,class_optional){
+    var div = document.createElement('div');
+        div.setAttribute('id', id);
+        div.style.overflowX = 'auto';
+    var table = document.createElement('table');
+        var tbody = document.createElement('tbody');
+    table.setAttribute("class",class_optional);
+    table.appendChild(tbody);
+    div.appendChild(table);
+    return div;
+}
+
+function generateGameBoard(){
+    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+    var div = createTable('Game-Board','board');
+    var tbody = div.firstElementChild.firstElementChild;
+        var tr = document.createElement('tr');
+            //Stack
+            var td = document.createElement('td');
+                td.style.width = '5%';
+                td.colSpan = '2';
+                var divs = createTable('Stack','stack');
+                var tbodys = divs.firstElementChild.firstElementChild;
+                for(var i = 0; i < 14; i++){
+                    var trs = document.createElement('tr');
+                    var span = document.createElement('span');
+                    span.style.fontSize = '3vw';
+                    span.innerHTML = span.textContent = '&#127074;';
+                    trs.appendChild(span);
+                    tbodys.appendChild(trs);
+                }
+                td.appendChild(divs);
+            tr.appendChild(td);
+
+            //Playing Field
+            var td2 = document.createElement('td');
+                td2.style.width = '100%';
+                td2.style.height = '100%';
+                var divf = createTable('Play-Field','board');
+                /*var tbodyf = divf.firstElementChild.firstElementChild;
+                for(var i = 0; i < 7; i++){
+                    var trf = document.createElement('tr');
+                    for(var j = 0; j < 7; j++){
+                        var tdf = document.createElement('td');
+                        var span = document.createElement('span');
+                        span.style.fontSize = '5vw';
+                        span.innerHTML = span.textContent = "&#127025;";
+                        tdf.appendChild(span);
+                        trf.appendChild(tdf);
+                    }
+                    tbodyf.appendChild(trf);
+                }*/
+                var table = divf.firstElementChild;
+                for(var i = 0; i < 7; i++){
+                    var row = table.insertRow(i);
+                    for(var j = 0; j < 7; j++){
+                        var cell = row.insertCell(j);
+                        cell.innerHTML = "&#127025;";
+                        cell.style.fontSize = '5vw';
+                    }
+                }
+                td2.appendChild(divf);
+            tr.appendChild(td2);
+
+            //Stats
+                var td3 = document.createElement('td');
+                td3.style.width = '5%';
+                td3.colSpan = '1';
+                td3.textContent = 'Stats';
+            tr.appendChild(td3);
+        tbody.appendChild(tr);
+    game_page.appendChild(div);
+}
 function generateBoard(){
     /**
      * For now it only is a simple table 28x28
@@ -236,7 +329,13 @@ async function newGame(){
 function quitGame(){
     document.getElementById("quit-game").style.display = "none";
     document.getElementById('new-game').style.display = 'inline-block';
-    tbl.parentNode.removeChild(tbl);
+    var content = document.getElementById('ai-page').getElementsByClassName[0];
+    var parent = document.getElementById('Game-Board').parentNode;
+    console.log(parent.children);
+    console.log(parent);
+    
+    
+    for(var i = 0; i < 3;i++) parent.removeChild(parent.children[1]);
 }
 
 

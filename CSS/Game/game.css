@@ -7,6 +7,18 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 
 }
 
+table{
+    table-layout: auto;
+    border-collapse: collapse;
+    width: 100%;
+}
+table.board{
+    border: 1px solid #444;
+}
+table.stack tr{margin-bottom: 3px; margin-right: 2px;}
+table .absorbing-colum{
+    width:100%;
+}
 
 .loader {
     position: absolute;
