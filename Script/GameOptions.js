@@ -12,18 +12,20 @@ var pieces = new Array("DM-0-0","DM-0-1","DM-0-2","DM-0-3", "DM-0-4","DM-0-5", "
         "DM-6-6");
 
 
-function createPiece(id, add_onclick,left,right){
+function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
     var path = 'Assets/DominoPieces/';
     var img = document.createElement('img');
-    img.src = path + id + '.png';    
+    img.src = path + ((is_flipped)?'DM-Flip':id) + '.png';
+    img.style.width = '100%';    
        
     var span_piece = document.createElement('span');
-        span_piece.setAttribute('class','DM-flipped');        
+        span_piece.setAttribute('class',('DM-'+((is_flipped)? 'flipped':'displayed')));        
         span_piece.setAttribute('id',id);
         span_piece.style.display = 'inline-block';
         span_piece.appendChild(img);
         span_piece.style.marginLeft = left + 'px';
         span_piece.style.marginRight = right + 'px';
+        span_piece.style.width = width;
         if(add_onclick){
             img.src = path + 'DM-Flip.png';
             var onclick = span_piece.getAttribute('onclick');
@@ -38,32 +40,31 @@ function createPiece(id, add_onclick,left,right){
                 }
             };
         }
-    //adding on mouse hover
-    span_piece.onmouseover = function(){
-        span_piece.firstChild.setAttribute('style',"filter: invert(100%); border: 3px outset whitesmoke; border-radius: 15%;");       
-    };
-    span_piece.onmouseout = function(){
-        span_piece.firstChild.setAttribute('style',"filter: invert(0%); border: 0px hidden;");       
-    };
+    if(hover){
+        span_piece.onmouseover = function(){
+            span_piece.firstChild.style.filter = 'invert(100%)';
+            span_piece.firstChild.style.border = '3px outset whitesmoke';
+            span_piece.firstChild.style.borderRadius = '15%';       
+        };
+        span_piece.onmouseout = function(){
+            span_piece.firstChild.style.filter = 'invert(0%)';
+            span_piece.firstChild.style.border = '0px hidden';
+            span_piece.firstChild.style.borderRadius = '0%';       
+        };
+    }
+    else{span_piece.className = 'DM-normal';}
     return span_piece;
 }
-
-
-function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right){
+function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width,hover){
     pieces_array.forEach(function(piece){
-        receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right));
+        receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
     });
 }
-
-
 function generateHtml(receiver, content){
     //function to generate html code
     var html = new DOMParser().parseFromString(content, "text/html");
     receiver.appendChild(html.body.childNodes[0]);
 }
-
-
-
 function displayInfo(receiver, inner_text, option){
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "hidden";
     var str = 
@@ -75,209 +76,48 @@ function displayInfo(receiver, inner_text, option){
         + "</div>";
     generateHtml(receiver, str);
 }
-
 function closeInfo(option){
     if(option){
         var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
         game_page.removeChild(document.getElementById('loader'));
-        generatePlayerSide('AI');
-        generateGameBoard();
-        generatePlayerSide('Current');
+        generateGameBoard('AI','Current')
+        startGame(pieces,'AI','Current');
     }
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "visible";
     var child = document.getElementById("info-popup");
     var parent = child.parentNode;
     parent.removeChild(child);
     document.getElementById('ai-page').style.overflowY = 'auto';
-    //generateBoard();
 }
 
 
-function generatePlayerSide(player){
+function generateGameBoard(player1,player2){
     var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    var div = createTable('Player'+player,'');
-    var tbody = div.firstElementChild.firstElementChild;
-            var tr = document.createElement('tr');
-            for(var i = 0; i < 7; i++){
-                var td = document.createElement('td');
-                var span = document.createElement('span');
-                span.style.fontSize = '5vw';
-                span.innerHTML = span.textContent = "&#127074;";
-                td.appendChild(span);
-                tr.appendChild(td);
-            }
-        tbody.appendChild(tr);
-    game_page.appendChild(div);
-}
+    var board = document.createElement('div');
+        board.setAttribute('id','Board');
+    var player1_side = document.createElement('div');
+        player1_side.setAttribute('id','Player-'+player1);
+        player1_side.setAttribute('class','player-class');
 
-function createTable(id,class_optional){
-    var div = document.createElement('div');
-        div.setAttribute('id', id);
-        div.style.overflowX = 'auto';
-    var table = document.createElement('table');
-        var tbody = document.createElement('tbody');
-    table.setAttribute("class",class_optional);
-    table.appendChild(tbody);
-    div.appendChild(table);
-    return div;
-}
+    var stk_b = document.createElement('div');
+        var board_side = document.createElement('div');
+            board_side.setAttribute('id','Game-Board');
 
-function generateGameBoard(){
-    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    var div = createTable('Game-Board','board');
-    var tbody = div.firstElementChild.firstElementChild;
-        var tr = document.createElement('tr');
-            //Stack
-            var td = document.createElement('td');
-                td.style.width = '5%';
-                td.colSpan = '2';
-                var divs = createTable('Stack','stack');
-                var tbodys = divs.firstElementChild.firstElementChild;
-                for(var i = 0; i < 14; i++){
-                    var trs = document.createElement('tr');
-                    var span = document.createElement('span');
-                    span.style.fontSize = '3vw';
-                    span.innerHTML = span.textContent = '&#127074;';
-                    trs.appendChild(span);
-                    tbodys.appendChild(trs);
-                }
-                td.appendChild(divs);
-            tr.appendChild(td);
+        var stack_side = document.createElement('div');
+            stack_side.setAttribute('id','Player-Stack');
+            stack_side.style.borderRight = '1.5px solid #444';
 
-            //Playing Field
-            var td2 = document.createElement('td');
-                td2.style.width = '100%';
-                td2.style.height = '100%';
-                var divf = createTable('Play-Field','board');
-                /*var tbodyf = divf.firstElementChild.firstElementChild;
-                for(var i = 0; i < 7; i++){
-                    var trf = document.createElement('tr');
-                    for(var j = 0; j < 7; j++){
-                        var tdf = document.createElement('td');
-                        var span = document.createElement('span');
-                        span.style.fontSize = '5vw';
-                        span.innerHTML = span.textContent = "&#127025;";
-                        tdf.appendChild(span);
-                        trf.appendChild(tdf);
-                    }
-                    tbodyf.appendChild(trf);
-                }*/
-                var table = divf.firstElementChild;
-                for(var i = 0; i < 7; i++){
-                    var row = table.insertRow(i);
-                    for(var j = 0; j < 7; j++){
-                        var cell = row.insertCell(j);
-                        cell.innerHTML = "&#127025;";
-                        cell.style.fontSize = '5vw';
-                    }
-                }
-                td2.appendChild(divf);
-            tr.appendChild(td2);
+        var arr = new Array(stack_side,board_side);
+            arr.forEach(function(p){stk_b.appendChild(p);});
 
-            //Stats
-                var td3 = document.createElement('td');
-                td3.style.width = '5%';
-                td3.colSpan = '1';
-                td3.textContent = 'Stats';
-            tr.appendChild(td3);
-        tbody.appendChild(tr);
-    game_page.appendChild(div);
-}
-function generateBoard(){
-    /**
-     * For now it only is a simple table 28x28
-     *
-    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    tbl = document.createElement('table');
-        tbl.style.width = '100%';
-        tbl.style.height = '100%';
-        tbl.setAttribute('border', '1');
-        tbl.setAttribute('id', 'table-game');
-        var tbdy = document.createElement('tbody');
-            for (var i = 0; i < 7; i++) { //table with 3 columns
-                var tr = document.createElement('tr');
-                for (var j = 0; j < 7; j++) {
-                    var td = document.createElement('td');
-                    td.appendChild(document.createTextNode('\u0020'))
-                    tr.appendChild(td)
-                }
-                tbdy.appendChild(tr);
-            }
-            tbl.appendChild(tbdy);
-    game_page.appendChild(tbl);
-    givePieces(tbl.firstChild.childNodes[1].firstChild, new Array("DM-0-6"), false, 0,0);*/
-    var str = "<form id=\"board\" style=\"display: inline-block;\" width=\"100%\" height=\"100%\">"
-                + "<p aling=\"center\">"
-                    + "<table border=\"0\" cellspacing=\"0\" cellpading=\"0\">"
-                        + "<tbody>"
-                            + "<tr>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                            + "</tr>"
-                            + "<tr>"
-                                + "<td align=\"left\">"
-                                    + "<table width=\"30\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"
-                                        + "<tbody>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                        + "</tbody>"
-                                    + "</table>"
-                                + "</td>"
-                                + "<td align=\"middle\">"
-                                    + "<table>"
-                                        + "<tbody>"
-                                            + "<tr>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                                + "<td with=\"120\"></td>"
-                                            + "</tr>"
-                                        + "</tbody>"
-                                    + "</table>"
-                                + "</td>"
-                                + "<td align=\"left\">"
-                                    + "<table width=\"30\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"
-                                        + "<tbody>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                            + "<tr></tr>"
-                                        + "</tbody>"
-                                    + "</table>"
-                                + "</td>"
-                            + "</tr>"
-                            + "<tr>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                                + "<td width=\"120\"></td>"
-                            + "</tr>"
-                        + "</tbody>"
-                    + "</table>"
-                + "</p>"
-            + "</form>";
-    var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    generateHtml(game_page,str);
+    var player2_side = document.createElement('div');
+        player2_side.setAttribute('id','Player-'+player2);
+        player2_side.setAttribute('class','player-class');
     
+    arr = new Array(player1_side,stk_b,player2_side);
+    arr.forEach(function(p){board.appendChild(p);});
+    board_side.textContent = 'board';
+    game_page.appendChild(board);
 }
 
 
@@ -316,26 +156,19 @@ async function newGame(){
             + "</p>",true);
 
     //add domino pieces to the info window
-        givePieces(document.getElementById("info-cnt"), pieces, true, 5,5);
+        givePieces(document.getElementById("info-cnt"), pieces, true, 5,5,false,'',true);
         document.getElementById('ai-page').style.overflowY = 'hidden';
-    await sleep(3000);
-    pieces.forEach(async function(piece){
-        var p = document.getElementById(piece);
-        p.onclick.apply(p);
-    });
 }
 
 
 function quitGame(){
     document.getElementById("quit-game").style.display = "none";
     document.getElementById('new-game').style.display = 'inline-block';
-    var content = document.getElementById('ai-page').getElementsByClassName[0];
-    var parent = document.getElementById('Game-Board').parentNode;
-    console.log(parent.children);
-    console.log(parent);
+    var content = document.getElementById('Board');
     
-    
-    for(var i = 0; i < 3;i++) parent.removeChild(parent.children[1]);
+    var parent = content.parentElement;
+    parent.removeChild(content);
+
 }
 
 

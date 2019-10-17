@@ -85,7 +85,42 @@ table .absorbing-colum{
 }
 #quit-game:hover{filter: invert(75%);}
 
-/*#DM-0-0 span.DM-flipped, #DM-0-1 span.DM-flipped, #DM-0-2 span.DM-flipped, #DM-0-3 span.DM-flipped, #DM-0-4 span.DM-flipped, #DM-0-5 span.DM-flipped, #DM-0-6 span.DM-flipped,
+.grid-container{
+    display: grid;
+    width: 100vw;
+}
+
+
+#Board{
+    width: 100vw;
+    height: 100%;
+    padding: 10px 0 10px 0;
+}
+.player-class{
+    width: 100vw;
+    overflow-x: auto;
+    padding: 15px 0 15px 0;
+    margin-bottom: 5px;
+    height: 10%;
+}
+#Player-Stack{
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    float: left;
+    border-right: 2px solid #444;
+    width: 8vw;
+    height: 100%;
+}
+#Game-Board{
+    display: block;
+    overflow-x: auto;
+    width: 91vw;
+    text-align: center;
+    height: 200%;
+}
+/*
+#DM-0-0 span.DM-flipped, #DM-0-1 span.DM-flipped, #DM-0-2 span.DM-flipped, #DM-0-3 span.DM-flipped, #DM-0-4 span.DM-flipped, #DM-0-5 span.DM-flipped, #DM-0-6 span.DM-flipped,
 #DM-1-1 span.DM-flipped, #DM-1-2 span.DM-flipped, #DM-1-3 span.DM-flipped, #DM-1-4 span.DM-flipped, #DM-1-5 span.DM-flipped, #DM-1-6 span.DM-flipped,
 #DM-2-2 span.DM-flipped, #DM-2-3 span.DM-flipped, #DM-2-4 span.DM-flipped, #DM-2-5 span.DM-flipped, #DM-2-6 span.DM-flipped,
 #DM-3-3 span.DM-flipped, #DM-3-4 span.DM-flipped, #DM-3-5 span.DM-flipped, #DM-3-6 span.DM-flipped,

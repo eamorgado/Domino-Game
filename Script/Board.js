@@ -8,31 +8,39 @@ class Board{
     }
     getDominos(){return this.dominos;}
     isEmpty(){return typeof this.dominos === 'undefined' && this.dominos.length == 0;}
-    getTopSide(){
-        return ((!this.isEmpty())? this.top_side : -1)
-    }
-    getBotSide(){
-        return ((!this.isEmpty())? this.bot_side : -1);
-    }
+    getTopSide(){return ((!this.isEmpty())? this.top_side : -1)}
+    getBotSide(){return ((!this.isEmpty())? this.bot_side : -1);}
 
     boardSize(){return this.getDominos().length;}
-    addDominoTop(domino, rec1_match){
+    addDominoTop(domino, index_match){
+        this.dominos.splice(index_match,0,domino);
+        domino.newOwner('board');
         this.getDominos().push(domino);
-        if(rec1_match){
-            domino.flipPiece();
-            this.top_side = domino.getRec2();
-        }
-        else
-            this.top_side = domino.getRec1();
+        this.top_side = index_match;
     }
-    addDominoBot(domino,rec1_match){
+    addDominoBot(domino,index_match){
+        domino.newOwner('board');
         this.getDominos().push(domino);
-        if(rec1_match){
-            domino.flipPiece();
-            this.top_side = domino.getRec2();
+        this.bot_side = index_match;
+    }
+    getMatch(domino){
+        var dom_top = this.getDominos()[0];
+        var dom_bot = this.getDominos()[this.getBotSide];
+        //two side match
+        var tp = domino.match(dom_top);
+        var bt = domino.match(dom_bot);
+        if(tp == 'no' && bt == 'no') return false;
+        if(tp != 'no'){
+            if(bt != 'no')
+                return getRandomElements(new Array(0,this.getBotSide()),1)[0];
+            return 0;
         }
-        else
-            this.top_side = domino.getRec1();
+        else if(bt != 'no'){
+            if(tp != 'no')
+                return getRandomElements(new Array(0,this.getBotSide()),1)[0];
+            return this.getBotSide();
+        }
+        return false;
     }
 }
 
