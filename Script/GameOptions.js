@@ -55,9 +55,12 @@ function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
     else{span_piece.className = 'DM-normal';}
     return span_piece;
 }
-function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width,hover){
+function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width,hover,before){
     pieces_array.forEach(function(piece){
-        receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
+        if(before)
+            receiver.insertBefore(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover),receiver.childNodes[0]);
+        else
+            receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
     });
 }
 function generateHtml(receiver, content){
@@ -116,7 +119,7 @@ function generateGameBoard(player1,player2){
     
     arr = new Array(player1_side,stk_b,player2_side);
     arr.forEach(function(p){board.appendChild(p);});
-    board_side.textContent = 'board';
+    //board_side.textContent = 'board';
     game_page.appendChild(board);
 }
 
@@ -141,7 +144,7 @@ async function newGame(){
             //givePieces(game_page, pieces, true, 5,5);
             //await sleep(2000);
     //overlap a information window
-        displayInfo(document.getElementById('ai-page'), 
+        /*displayInfo(document.getElementById('ai-page'), 
             "<p>"
                 + "This are all the game pieces, 28 in total"
             + "</p>"
@@ -157,7 +160,9 @@ async function newGame(){
 
     //add domino pieces to the info window
         givePieces(document.getElementById("info-cnt"), pieces, true, 5,5,false,'',true);
-        document.getElementById('ai-page').style.overflowY = 'hidden';
+        document.getElementById('ai-page').style.overflowY = 'hidden';*/
+        generateGameBoard('AI','Current');
+        startGame(pieces,'AI','Current');
 }
 
 

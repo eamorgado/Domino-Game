@@ -1,10 +1,11 @@
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/
 class Board{
-    constructor(){
+    constructor(id){
         this.dominos = new Array();
         this.top_side = -1;
         this.bot_side = -1;
+        this.id = id;
     }
     getDominos(){return this.dominos;}
     isEmpty(){return typeof this.dominos === 'undefined' && this.dominos.length == 0;}
@@ -13,15 +14,17 @@ class Board{
 
     boardSize(){return this.getDominos().length;}
     addDominoTop(domino, index_match){
-        this.dominos.splice(index_match,0,domino);
+        this.dominos.splice(0,0,domino);
         domino.newOwner('board');
-        this.getDominos().push(domino);
+        //this.getDominos().push(domino);
         this.top_side = index_match;
+        if(this.getDominos().length == 1) this.bot_side = index_match;
     }
     addDominoBot(domino,index_match){
         domino.newOwner('board');
         this.getDominos().push(domino);
-        this.bot_side = index_match;
+        this.bot_side = this.getDominos().length-1;
+        if(this.getDominos().length == 1) this.top_side = index_match;
     }
     getMatch(domino){
         var dom_top = this.getDominos()[0];

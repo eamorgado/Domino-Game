@@ -21,10 +21,10 @@ function filterArray(source, to_remove){
     return tmp_source;
 }
 
-
+var players;
 function startGame(pieces,player1, player2){
     //start players + stack
-        var players = new Array(3);
+        players = new Array(3);
             [players[0],players[1],players[2]] = [new Player(player1),new Player(player2),new Player('Stack')];
             
     var pieces_to_give = Array.from(pieces);
@@ -51,23 +51,42 @@ function startGame(pieces,player1, player2){
     
     var max1 = players[0].findMaxPiece();
     var max2 = players[1].findMaxPiece();
-
     var id = ((max1[0] > max2[0])? max1[1] : ((max1[0] == max2[0])? 
                 getRandomElements(new Array(max1[1],max2[1]),1)[0]: max2[1]));
-    
-    gameLoop(document.getElementById(id).parentElement.id)        
+
+                console.log(document.getElementById(id).parentElement.id);
+    gameLoop(document.getElementById(id).parentElement.id,id)        
 }
 
-function gameLoop(player){
+function gameLoop(player, piece){
+    //piece is the img id
     var game_over = false;
-    var game_board = new Board();
+    var game_board = new Board('Game-Board');
+    //player first move
+    if(player == 'Player-AI'){
+        players[0].playPiece(piece,game_board,0);
+        player = 'Player-Current';
+    }else if(player == 'Player-Current'){
+        players[1].playPiece(piece,game_board,0);
+        player = 'Player-AI';
+    }
+
     while(!game_over){
         if(player != 'Player-Current'){
+            console.log("And And here");
             //AI or other player
             if(player == 'Player-AI'){
-                aiMakeMove();
+                console.log("AI to play");
+                players[0].findBestPlay(game_board);
+                console.log("AI played");
+                
             }
             player = 'Player-Current';
         }
+        else{
+            console.log(" You must Make play");
+            
+        }
+        game_over = true;
     }
 }
