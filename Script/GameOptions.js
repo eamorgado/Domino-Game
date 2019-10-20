@@ -26,6 +26,7 @@ function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
         span_piece.style.marginLeft = left + 'px';
         span_piece.style.marginRight = right + 'px';
         span_piece.style.width = width;
+        span_piece.style.transform = 'rotate(0deg)';
         if(add_onclick){
             img.src = path + 'DM-Flip.png';
             var onclick = span_piece.getAttribute('onclick');
@@ -55,14 +56,18 @@ function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
     else{span_piece.className = 'DM-normal';}
     return span_piece;
 }
-function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width,hover,before){
-    pieces_array.forEach(function(piece){
-        if(before)
-            receiver.insertBefore(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover),receiver.childNodes[0]);
-        else
-            receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
-    });
+function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right,is_flipped, width,hover,before){
+    for(let piece of pieces_array){
+        if(before){
+            var first = receiver.firstElementChild
+            //console.log("givePieces: adding before");            
+            receiver.insertBefore(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover),first);
+        }
+        else receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
+    }
 }
+
+
 function generateHtml(receiver, content){
     //function to generate html code
     var html = new DOMParser().parseFromString(content, "text/html");
@@ -79,11 +84,14 @@ function displayInfo(receiver, inner_text, option){
         + "</div>";
     generateHtml(receiver, str);
 }
+
+var intro = true;
 function closeInfo(option){
     if(option){
         var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
         game_page.removeChild(document.getElementById('loader'));
-        generateGameBoard('AI','Current')
+        intro = false;
+        generateGameBoard('AI','Current');
         startGame(pieces,'AI','Current');
     }
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "visible";
@@ -96,28 +104,24 @@ function closeInfo(option){
 
 function generateGameBoard(player1,player2){
     var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+
     var board = document.createElement('div');
         board.setAttribute('id','Board');
     var player1_side = document.createElement('div');
         player1_side.setAttribute('id','Player-'+player1);
         player1_side.setAttribute('class','player-class');
 
-    var stk_b = document.createElement('div');
-        var board_side = document.createElement('div');
-            board_side.setAttribute('id','Game-Board');
+    var board_side = document.createElement('div');
+        board_side.setAttribute('id','Game-Board');
 
-        var stack_side = document.createElement('div');
-            stack_side.setAttribute('id','Player-Stack');
-            stack_side.style.borderRight = '1.5px solid #444';
-
-        var arr = new Array(stack_side,board_side);
-            arr.forEach(function(p){stk_b.appendChild(p);});
+    var stack_side = document.createElement('div');
+        stack_side.setAttribute('id','Player-Stack');
 
     var player2_side = document.createElement('div');
         player2_side.setAttribute('id','Player-'+player2);
         player2_side.setAttribute('class','player-class');
     
-    arr = new Array(player1_side,stk_b,player2_side);
+    arr = new Array(stack_side,player1_side,board_side,player2_side);
     arr.forEach(function(p){board.appendChild(p);});
     //board_side.textContent = 'board';
     game_page.appendChild(board);
@@ -161,6 +165,8 @@ async function newGame(){
     //add domino pieces to the info window
         givePieces(document.getElementById("info-cnt"), pieces, true, 5,5,false,'',true);
         document.getElementById('ai-page').style.overflowY = 'hidden';*/
+        document.getElementById("game-in-progress").style.display = "block";
+        document.getElementById("inst-on-game").style.display = 'block';
         generateGameBoard('AI','Current');
         startGame(pieces,'AI','Current');
 }
@@ -173,6 +179,10 @@ function quitGame(){
     
     var parent = content.parentElement;
     parent.removeChild(content);
+    document.getElementById("game-in-progress").style.display = "none";
+    document.getElementById("inst-on-game").style.display = 'none';
+    document.getElementById("loader").style.display = 'none';
+        
 
 }
 

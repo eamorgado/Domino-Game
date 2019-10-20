@@ -14,6 +14,7 @@ body{
     font-family: roboto;
     font-weight: 800;
     color: white;
+    overflow-x: 'hidden';
 }
 
 
@@ -92,60 +93,6 @@ header.navbar::after{
     content: '';
     display: table; /*Element behaves like <table>*/
     clear:  both;
-}
-
-
-
-/*------------------------------------------------------------------------------
-                                 Medias
-------------------------------------------------------------------------------*/
-@media screen and (max-width: 2000px){
-    header.navbar img{width: 9%;}
-    header.navbar nav{
-        margin-right: 5%;
-        margin-bottom:5%;
-        width: 50%;
-    }
-}
-
-@media screen and (max-width: 1500px){
-    header.navbar img{
-        margin-bottom: 0;
-        width: 12%;
-    }
-    header.navbar nav{width: 60%;}
-}
-
-@media screen and (max-width: 900px){
-    header.navbar img{
-        margin-left: 10%;
-        width: 20%;
-    }
-    header.navbar nav{width: 70%;}
-}
-
-@media screen and (max-width: 750px){
-    header.navbar img{
-        margin-left: 10%;
-        width: 20%;
-    }
-    header.navbar nav{
-        margin-right: 5%;
-        margin-bottom:10%;
-        width: 90%; 
-    }
-}
-
-@media screen and (max-width: 570px){
-    header.navbar nav{width: 80%;}
-    header.navbar nav a{font-size: 15px;}
-    header.navbar h1{font-size:45px;}
-}
-
-@media screen and (max-width: 530px){
-    header.navbar nav{width: 80%;}
-    header.navbar nav a{font-size: 12px;}
-    header.navbar h1{font-size:40px;}
 }
 
 /*------------------------------------------------------------------------------

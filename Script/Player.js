@@ -10,172 +10,150 @@ class Player{
     addPoints(points){this.points += points;}
     playPiece(id,board,indexmatch){
         var dom = this.hand.get(id);
-        if(indexmatch == 0){
-            //add domino piece
-                board.addDominoTop(dom,indexmatch);
-            //place on board
-                var b = document.getElementById(board.id);
-                var parent = document.getElementById('Player-'+this.player);
-                parent.removeChild(document.getElementById(id));
-                givePieces(b,new Array(id),false,1,1,false,'5%',false,false);
-            var d = board.getDominos()[indexmatch];
-            d.rotatePiece('right');
-            //rotate if necessary
-                if(d.isDouble())
-                    d.rotatePiece('left');
-            this.hand.delete(id);
-        }
-        else board.addDominoBot(dom,indexmatch);
-
-    }
-
-    findBestPlay(board){
-        //for AI player
-        var options = new Array(new Map(),new Map()); //options for top and bot
-        var size = board.getDominos().length;
-        var top = board.getDominos()[0];
-        var bot = board.getDominos()[board.getDominos().length-1];
-        console.log("findBest: top-- "+top);
-        console.log("findBest: bot-- "+bot);
+        var before = (indexmatch == 0)? true:false;
+        if(before) board.addDominoTop(dom.copyDomino(),0);
+        else board.addDominoBot(dom.copyDomino(),indexmatch);
+        this.hand.delete(id);
         
-        //get all matched pieces
+        //place on board
+            var b = document.getElementById(board.id);
+            var parent = document.getElementById('Player-'+this.player);
+            parent.removeChild(document.getElementById(id));
+            
+            givePieces(b,new Array(id),false,1,1,false,'5%',false,false,before);
+            var d = board.getDominos()[indexmatch];
+            d.rotatePiece('left'); 
+            //rotate if necessary
+                if(d.isDouble()) d.rotatePiece('right');
+    }
+    findPlayerMatch(board){
+        var options = new Array(new Map(),new Map()); //options for top and bot
+        var length = board.getDominos().length;
+        var dom = board.getDominos();
+        var top = dom[0], bot = dom[length-1];
+
         for(let [k,v] of this.hand){
-            var verify = new Array(v.match(top,'left',size),v.match(bot,'right',size)); //get the 2 arrays for all possibilities
+            var verify = new Array(v.match(top,'left',length),v.match(bot,'right',length)); //get the 2 arrays for all possibilities
             if(verify[0] == 'nomatch' && verify[1] == 'nomatch') continue; //there is no match
             for(let i = 0; i < 2; i++) if(verify[i] != 'nomatch') options[i].set(k,verify[i]);
         }
+
         //get max points for piece
-        var max = -1, move, piece, is_top;
-        for(let i = 0; i < 2; i++){
-            for(let [k,v] of options[i]){
-                let points = this.hand.get(k).getPoints();
-                if(points > max) [max,piece,move,is_top] = [points,k,v,((i == 0)?true:false)];
-                else if(points == max)
-                    if(Math.round(Math.random()) == 1) [piece,move,is_top] = [k,v,((i == 0)?true:false)];
+            var max = -1, move, piece, is_top;
+            for(let i = 0; i < 2; i++){
+                for(let [k,v] of options[i]){
+                    let points = this.hand.get(k).getPoints();
+                    if(points > max) [max,piece,move,is_top] = [points,k,v,((i == 0)?true:false)];
+                    else if(points == max) if(Math.round(Math.random()) == 1) [piece,move,is_top] = [k,v,((i == 0)?true:false)];
+                }
             }
-        }
-        if(max == -1) console.log('No pieces => Stack');
-        var b = document.getElementById('Game-Board');
-        var splitted = move.split('-');        
+        return [max,move,piece,is_top];
+    }
+    findBestPlay(board,stack,player){//for AI player
+        var length = board.getDominos().length;  
+        var max, move, piece, is_top;
+
+        //get all matched pieces
+        [max,move,piece,is_top] = this.findPlayerMatch(board);      
+        
+        //has to go to stack
+            if(max == -1){
+                console.log('No pieces => Stack');
+                var empty = this.takeFromStack(stack);
+                if(empty) return;
+                this.findBestPlay(board,stack);
+                return;
+            }
+        
+        var copy = this.hand.get(piece).copyDomino();        
+        var b = document.getElementById('Game-Board'), splitted = move.split('-');     
         var parent = document.getElementById('Player-'+this.player);
-        parent.removeChild(document.getElementById(piece));
-        var length = board.getDominos().length;
-        var copy = this.hand.get(piece).copyDomino();
-        var d;
+            parent.removeChild(document.getElementById(piece));
+            this.hand.delete(piece);
+
+        var pieces = new Array(piece);
+        var options_gp = new Array(b,pieces,false,1,1,false,'5%',false,false);
+        var to_top = false, to_rotate = true, rotate_side,translate, index, to_translate = false;
+
         switch(splitted.length){
-            case 3: //2sides-{left,right}  |  {ri,r2}-{left-right,both}
+            case 3: //2sides-comp  |  {r1,r2}-{left-right,both}
                 switch(splitted[1]){
-                    case '2sides': 
-                        if(splitted[2] == 'left'){
-                            board.addDominoTop(copy,0);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                        }
-                        else{
-                            board.addDominoBot(copy,length);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                        }
-                    break;
                     case 'r1': //r1-{left,right,both}
                         if(splitted[2] == 'both'){
-                            if(Math.round(Math.random()) == 1){
-                                board.addDominoBot(copy,length);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                                let d = board.getDominos()[length];
-                                d.rotatePiece('left');
-                            }
-                            else{
-                                board.addDominoTop(copy,0);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                                let d = board.getDominos()[0];
-                                d.rotatePiece('right');
-                            }
-                        }
-                        else{
-                            if(splitted[2] == 'left'){
-                                board.addDominoBot(copy,length);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                                d = board.getDominos()[length];
-                            }
-                            else if(splitted[2] == 'right'){
-                                board.addDominoTop(copy,0);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                                d = board.getDominos()[0];
-                            }d.rotatePiece(splitted[2]);
+                            if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'left'; translate = '-2vw';}//bot
+                            else{to_top = to_rotate = true; rotate_side = 'right'; translate = '2vw';}//top
+                        }else{
+                            to_top = !(splitted[2] == 'left'); to_rotate = true;
+                            [rotate_side,translate] = [splitted[2],(splitted[2] == 'left')? '-2vw' : '2vw'];
                         }
                     break;
                     case 'r2': //r2-{left,right,both}
                         if(splitted[2] == 'both'){
-                            if(Math.round(Math.random()) == 1){
-                                board.addDominoBot(copy,length);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                                let d = board.getDominos()[length];
-                                d.rotatePiece('right');
-                            }
-                            else{
-                                board.addDominoTop(copy,0);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                                let d = board.getDominos()[0];
-                                d.rotatePiece('left');
-                            }
-                        }
-                        else{
-                            if(splitted[2] == 'right'){
-                                board.addDominoBot(copy,length);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                                d = board.getDominos()[length];
-                            }
-                            else if(splitted[2] == 'left'){
-                                board.addDominoTop(copy,0);
-                                givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                                d = board.getDominos()[0];
-                            }d.rotatePiece(splitted[2]);
-                        }
+                            if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'right'; translate = '-2vw';}//bot
+                            else{to_top = to_rotate = true; rotate_side = 'left'; translate = '-2vw';}
+                        }else{
+                            to_top = !((splitted[2] == 'right'));to_rotate = true;
+                            [rotate_side,translate] = [splitted[2],(splitted[2] == 'right')? '-2vw' : '2vw'];
+                        }  
                     break;
                 }
             break;
-            case 4://{r1,r2}-{left,right}-{top,bot}
+            case 4: // 2sides-{left,right}-comp | {r1,r2}-{left,right}-comp
                 switch(splitted[1]){
-                    case 'r1': 
-                        if(splitted[3] == 'top'){
-                            board.addDominoTop(copy,0);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                            d = board.getDominos()[0];
-                        }
-                        else{
-                            board.addDominoBot(copy,length);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                            d = board.getDominos()[length];
-                        }
-                        d.rotatePiece(splitted[2]);
+                    case '2sides': 
+                        to_top = (splitted[2] == 'left'); to_rotate = false; to_translate = true;
+                        translate = ((splitted[2] == 'left')? '-2.5vw' : '2.5vw');
                     break;
-                    case 'r2': 
-                        if(splitted[3] == 'top'){
-                            board.addDominoTop(copy,0);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                            d = board.getDominos()[0];
-                        }
-                        else{
-                            board.addDominoBot(copy,length);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                            d = board.getDominos()[length];
-                        }
-                        d.rotatePiece(splitted[2]);
+                    case 'r1':
+                        to_top = (splitted[2] == 'left'); to_rotate = true;
+                        [rotate_side,translate] = (to_top? ['right','2vw'] : ['left','-2vw']);
+                    break;
+                    case 'r2':
+                        to_top = (splitted[2] == 'left'); to_rotate = true;
+                        [rotate_side,translate] = [splitted[2],top? '2vw' : '2vw'];
                     break;
                 }
-            break;
-            case 1: //2sides
-                if(is_top){
-                    board.addDominoTop(copy,0);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, true);
-                }
-                else{
-                    board.addDominoBot(copy,length);
-                            givePieces(b,new Array(piece),false,1,1,false,'5%',false,false, false);
-                }
+            break;            
+            case 5://{r1,r2}-{left,right}-{top,bot}-comp
+                to_top = (splitted[3] == 'top');
+                to_rotate = true;
+                rotate_side = splitted[2]; 
+                translate = ((splitted[1] == 'r1')? (top? '5vw':'-4.7vw') : (top? '-4.7vw':'4.7vw'));
             break;
         }
+
+        if(to_top){index = 0; board.addDominoTop(copy,index); options_gp[8] = true;}
+        else{index = length; board.addDominoBot(copy,index);}
+        givePieces.apply(null,options_gp);
+
+        var d = board.getDominos()[index];
+        if(to_rotate) d.rotatePiece(rotate_side,translate); 
+        if(to_translate) d.translatePieceX(translate);
+
+        console.log("domPiece "+piece+": ["+d.getRec1()+","+d.getRec2()+"]\nsplitted: "+splitted);
+        return;
     }
-    
+    takeFromStack(stack){
+        if(stack.getHand().size == 0){
+            console.log("Stack empty ========"); 
+            if(this.player != 'Current') showPassTurn();
+            return true;
+        }
+
+        var keys = Array.from(stack.getHand());
+        keys = keys[Math.floor(Math.random() * keys.length)];//random element in stack
+        keys = keys[0];
+        stack.hand.delete(keys);
+        //console.log("Giving piece "+keys+" to Player-"+this.player);
+        
+        var stack_h = document.getElementById('Player-Stack');
+        stack_h.textContent = 'Stack Pieces: '+ stack.getHand().size;
+        var flipped = !(this.player == 'Current'), hover = !flipped;
+        this.addPiece(new Array(keys),false,5,5,flipped,'5%',hover,false);
+        if(this.player != 'Current')
+            infoTakeStack();
+        return false;
+    }
     addPiece(pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover,is_stack){
         for(const piece of pieces_array){
             if(!this.hand.has(piece)){
@@ -186,8 +164,7 @@ class Player{
                 var splitted = piece.split('-');                
                 var rec1 = Number(splitted[1]);
                 var rec2 = Number(splitted[2]);
-                
-
+                //console.log("addPiece "+piece+" to PLayer-"+this.player+" ["+rec1+","+rec2+"]");
                 var domino = new Domino(rec1,rec2,is_flipped,'vertical','Player-'+this.player,piece);
                 this.hand.set(piece,domino);
             }

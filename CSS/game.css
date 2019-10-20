@@ -1,0 +1,177 @@
+/*------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------*/
+div.overlay[id="ai-page"], div[id="human-page"].overlay{
+    background-color: rgb(216, 169, 27);
+    background-color: rgba(216, 169, 27, 0.877);
+
+} 
+
+
+.loader {
+    position: absolute;
+    display: none;
+    margin-top: 0;
+    top: -25vh;
+    left: 5vw;
+    display: inline-block;
+    border: 16px solid black; /* Light grey */
+    border-top: 16px solid #F9C426; /* Blue */
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    animation: spin 3.5s linear infinite;
+}
+
+
+.DM-flipped:hover , .DM-displayed:hover{
+    animation: shake 2.5s;
+    animation-iteration-count: infinite; 
+    cursor: pointer;
+}
+
+#inst-on-game{
+    position: absolute;
+    display: none;
+    width: 5vw;
+    top: -16.5vh;
+    left: 40vw;
+}
+#inst-on-game:hover{
+    filter: invert(50%);
+    transform: scale(1.5);
+}
+/*------------------------------------------------------------------------------
+                    New game buttons quit game buttons
+------------------------------------------------------------------------------*/
+#new-game, #quit-game{
+    padding: 15px 20px;
+    margin: 8px 0;
+    border: 3px hidden;
+    border-radius: 15%;
+    width: auto;
+    cursor: pointer;
+    font-size: 40px;
+}
+
+
+#new-game{
+    color: whitesmoke;
+    background-color: #444;
+    display: inline-block;
+}
+
+
+#quit-game{
+    background-color: #f44336;
+    position: relative;
+    top: -150px;
+    left: -20%;
+    display:none
+}
+
+
+#quit-game:hover, #new-game:hover{
+    animation: shake 4s;
+    animation-iteration-count: infinite; 
+}
+
+
+#quit-game:hover{filter: invert(75%);}
+
+
+.grid-container{
+    display: grid;
+    width: 100vw;
+}
+
+
+#Board{
+    width: 100vw;
+    height: 100%;
+    padding: 10px 0 10px 0;
+}
+
+
+.player-class{
+    width: 100vw;
+    overflow-x: auto;
+    padding: 15px 0 15px 0;
+    margin-bottom: 5px;
+    height: 10%;
+}
+
+
+#Player-Stack{
+    text-align: center;
+    font-size: 2vw;
+    font-weight: 900;
+    margin-bottom: 3vh;
+    padding-bottom: 2vh;
+    border-bottom: 5px solid rgb(126, 99, 20);
+    width: 100vw;
+    height: 100%;
+}
+
+
+#Game-Board{
+    display: block;
+    overflow-x: auto;
+    width: 100vw;
+    text-align: center;
+    padding: 2vh 0 2vh 0;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+    height: 200%;
+}
+
+
+.modal-info{
+    position: absolute;
+    display: block;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #444;
+    background-color: rgba(68, 68, 68, 0.733);
+}
+
+
+.mi-content{
+    width: 50%;
+    top: -100px;
+    background-color: whitesmoke;
+    color: #444;
+    margin: 15% auto;
+    padding: 20px;
+    border: 2px solid #888;
+}
+
+
+#game-in-progress{
+    display: none;
+    width: 100%;
+    overflow: hidden;
+    position: relative;  
+    border-top: 3px solid whitesmoke;  
+    background-color: rgb(163, 127, 19);
+    animation: flash 10s linear infinite;
+}
+
+
+#game-in-progress p{
+    font-size: 2.5vh;
+    text-align: right;
+    margin: 0;
+    text-align: center;
+    line-height: 30px;
+    color: whitesmoke;
+    transform:translateX(50%);	
+    animation: scroll 20s linear infinite;
+}
+
+/*------------------------------------------------------------------------------
+------------------------------------------------------------------------------*/

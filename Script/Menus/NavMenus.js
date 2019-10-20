@@ -4,7 +4,7 @@ This javaScript file will control the opening and closing of "menus",
 ------------------------------------------------------------------------------*/
 
 
-function openMenu(element){
+function openMenu(element,zindex){
     /**
      * General function to open any "menu" in the page.
      * Given the element id it will set its styling to display the menu
@@ -12,6 +12,7 @@ function openMenu(element){
     document.getElementById(element).style.width="100%";
     document.getElementById(element).style.overflowY="scroll";
     document.getElementById("copy").style.visibility = "hidden";
+    if(zindex != 'undefined') document.getElementById(element).style.zIndex = zindex;
     document.body.style.overflowY = 'hidden';
     console.log(element + " is now visible");
 }
@@ -22,7 +23,19 @@ function closeMenu(element){
     document.getElementById(element).style.overflowY="hidden";
     document.getElementById("copy").style.visibility = "visible";
     document.body.style.overflowY = 'visible';
-    console.log(element + "is now hidden");
+    console.log(element + " is now hidden");
+    if(element == 'instruction-page'){
+        if(document.getElementById("ai-page").style.width == "100%"){
+            console.log("close body");
+            console.log("disp |"+document.getElementById("inst-on-game").style.display+"|");
+            
+            if(document.getElementById("inst-on-game").style.display == 'block'){
+                document.body.style.overflowY = 'hidden';
+                console.log("Closing");
+                
+            }
+        }
+    }
 }
 
 
@@ -59,3 +72,35 @@ function closeGame(element){
 
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/
+function infoTakeStack(){
+    document.getElementById("taking-from-stack").style.display = 'block';
+    document.body.style.overflowY = 'hidden';
+    
+    listen();
+    function listen(){
+        if(document.getElementById("taking-from-stack").style.display != 'none')
+            setTimeout(listen,1);
+            
+    }
+}
+
+function hideTakeStack(){
+    document.getElementById("taking-from-stack").style.display = 'none';
+    document.body.style.overflowY = 'visible';
+}
+
+
+function showPassTurn(){
+    document.getElementById("empty-stack").style.display = 'block';
+    document.body.style.overflowY = 'hidden';
+    listen();
+    function listen(){
+        if(document.getElementById("empty-stack").style.display != 'none')
+            setTimeout(listen,1);
+    }
+}
+
+function passTurn(close){
+    document.getElementById("empty-stack").style.display = 'none';
+    document.body.style.overflowY = 'visible';
+}
