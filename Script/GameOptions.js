@@ -56,8 +56,11 @@ function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
     else{span_piece.className = 'DM-normal';}
     return span_piece;
 }
-function givePieces(receiver, pieces_array, add_onclick, margin_lef, margin_right,is_flipped, width,hover,before){
-    for(let piece of pieces_array){
+function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right,is_flipped, width,hover,before){
+    var receiver = rec, choice = false;
+    if(Array.isArray(rec)) [receiver,choice] = [rec[0],true]
+    for(let p of pieces_array){
+        let piece = choice? p+rec[1] : p;
         if(before){
             var first = receiver.firstElementChild
             //console.log("givePieces: adding before");            
@@ -181,7 +184,9 @@ function quitGame(){
     parent.removeChild(content);
     document.getElementById("game-in-progress").style.display = "none";
     document.getElementById("inst-on-game").style.display = 'none';
-    document.getElementById("loader").style.display = 'none';
+    parent = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
+    content = document.getElementById("loader");
+    parent.removeChild(content);
         
 
 }

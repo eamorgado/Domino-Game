@@ -47,41 +47,29 @@ class Player{
                     else if(points == max) if(Math.round(Math.random()) == 1) [piece,move,is_top] = [k,v,((i == 0)?true:false)];
                 }
             }
-        return [max,move,piece,is_top];
+        return [max,move,piece,is_top,options];
     }
-    findBestPlay(board,stack,player){//for AI player
-        var length = board.getDominos().length;  
-        var max, move, piece, is_top;
 
-        //get all matched pieces
-        [max,move,piece,is_top] = this.findPlayerMatch(board);      
-        
-        //has to go to stack
-            if(max == -1){
-                console.log('No pieces => Stack');
-                var empty = this.takeFromStack(stack);
-                if(empty) return;
-                this.findBestPlay(board,stack);
-                return;
-            }
-        
-        var copy = this.hand.get(piece).copyDomino();        
-        var b = document.getElementById('Game-Board'), splitted = move.split('-');     
-        var parent = document.getElementById('Player-'+this.player);
-            parent.removeChild(document.getElementById(piece));
-            this.hand.delete(piece);
-
+    logicPlacement(move,piece,is_player){
+        var splitted = move.split('-');
         var pieces = new Array(piece);
+        var b = document.getElementById("Game-Board");
         var options_gp = new Array(b,pieces,false,1,1,false,'5%',false,false);
-        var to_top = false, to_rotate = true, rotate_side,translate, index, to_translate = false;
-
+        var to_top = false, to_rotate = true, rotate_side,translate, to_translate = false;
+        
         switch(splitted.length){
             case 3: //2sides-comp  |  {r1,r2}-{left-right,both}
                 switch(splitted[1]){
                     case 'r1': //r1-{left,right,both}
                         if(splitted[2] == 'both'){
-                            if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'left'; translate = '-2vw';}//bot
-                            else{to_top = to_rotate = true; rotate_side = 'right'; translate = '2vw';}//top
+                            if(is_player){
+                                to_rotate = true;
+                                rotate_side = new Array('right','left'); //top-bot
+                                translate = new Array('2vw','-2vw');
+                            }else{
+                                if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'left'; translate = '-2vw';}//bot
+                                else{to_top = to_rotate = true; rotate_side = 'right'; translate = '2vw';}//top
+                            }
                         }else{
                             to_top = !(splitted[2] == 'left'); to_rotate = true;
                             [rotate_side,translate] = [splitted[2],(splitted[2] == 'left')? '-2vw' : '2vw'];
@@ -89,8 +77,14 @@ class Player{
                     break;
                     case 'r2': //r2-{left,right,both}
                         if(splitted[2] == 'both'){
-                            if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'right'; translate = '-2vw';}//bot
-                            else{to_top = to_rotate = true; rotate_side = 'left'; translate = '-2vw';}
+                            if(is_player){
+                                to_rotate = true;
+                                rotate_side = new Array('left','right'); //top-bot
+                                translate = new Array('-2vw','-2vw');
+                            }else{
+                                if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'right'; translate = '-2vw';}//bot
+                                else{to_top = to_rotate = true; rotate_side = 'left'; translate = '-2vw';}
+                            }
                         }else{
                             to_top = !((splitted[2] == 'right'));to_rotate = true;
                             [rotate_side,translate] = [splitted[2],(splitted[2] == 'right')? '-2vw' : '2vw'];
@@ -105,7 +99,7 @@ class Player{
                         translate = ((splitted[2] == 'left')? '-2.5vw' : '2.5vw');
                     break;
                     case 'r1':
-                        to_top = (splitted[2] == 'left'); to_rotate = true;
+                        to_top = (splitted[2] == 'left'); to_rotate = true; 
                         [rotate_side,translate] = (to_top? ['right','2vw'] : ['left','-2vw']);
                     break;
                     case 'r2':
@@ -121,22 +115,53 @@ class Player{
                 translate = ((splitted[1] == 'r1')? (top? '5vw':'-4.7vw') : (top? '-4.7vw':'4.7vw'));
             break;
         }
+        return [to_top,to_rotate,to_translate,rotate_side,translate,options_gp];        
+    }
+    findBestPlay(board,stack){//for AI player
+        var length = board.getDominos().length;  
+        var max, move, piece, is_top,opt;
+        //get all matched pieces
+        [max,move,piece,is_top,opt] = this.findPlayerMatch(board);    
+        //has to go to stack
+            if(max == -1){
+                console.log('No pieces => Stack');
+                var empty = this.takeFromStack(stack);
+                if(empty) return;
+                this.findBestPlay(board,stack); return;
+            }
+        
+        var copy = this.hand.get(piece).copyDomino();        
+        var b = document.getElementById('Game-Board'), splitted = move.split('-');     
+        var parent = document.getElementById('Player-'+this.player);
+            parent.removeChild(document.getElementById(piece));
+            this.hand.delete(piece);
 
+        var options_gp;
+        var to_top,to_rotate,to_translate,rotate_side,translate;
+        [to_top,to_rotate,to_translate,rotate_side,translate,options_gp] = this.logicPlacement(move,piece,false);
+        
+        var index;
         if(to_top){index = 0; board.addDominoTop(copy,index); options_gp[8] = true;}
         else{index = length; board.addDominoBot(copy,index);}
         givePieces.apply(null,options_gp);
-
+        document.getElementById(piece).style.display = 'block'
         var d = board.getDominos()[index];
         if(to_rotate) d.rotatePiece(rotate_side,translate); 
         if(to_translate) d.translatePieceX(translate);
 
         console.log("domPiece "+piece+": ["+d.getRec1()+","+d.getRec2()+"]\nsplitted: "+splitted);
+        turn(false);
+        makePlay(players[3]);
         return;
     }
     takeFromStack(stack){
         if(stack.getHand().size == 0){
             console.log("Stack empty ========"); 
-            if(this.player != 'Current') showPassTurn();
+            if(this.player != 'Current'){
+                showPassTurn();
+                turn(true);
+                makePlay(players[3]);
+            }
             return true;
         }
 

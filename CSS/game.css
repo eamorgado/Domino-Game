@@ -96,7 +96,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 .player-class{
     width: 100vw;
     overflow-x: auto;
-    padding: 15px 0 15px 0;
+    padding: 20px 0 20px 0;
     margin-bottom: 5px;
     height: 10%;
 }
@@ -115,14 +115,15 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 
 
 #Game-Board{
-    display: block;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: baseline; /* align vertical */
     overflow-x: auto;
-    width: 100vw;
-    text-align: center;
-    padding: 2vh 0 2vh 0;
+    width: 90vw;
+    height: 20vh;
+    padding: 2vh 5vw 2vh 5vw;
     margin-top: 2vh;
     margin-bottom: 2vh;
-    height: 200%;
 }
 
 
