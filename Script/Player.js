@@ -26,7 +26,7 @@ class Player{
             if(!d.isDouble()){d.rotatePiece('left'); side = 'left'};
             givePieces(b,new Array(id),false,1,1,false,'5%',false,before,side);
     }
-    findPlayerMatch(board){
+    findPlayerMatch(board,check){
         var options = new Array(new Map(),new Map()); //options for top and bot
         var length = players[3].getDominos().length;
         var dom = players[3].getDominos();
@@ -37,11 +37,13 @@ class Player{
             if(verify[0] == 'nomatch' && verify[1] == 'nomatch') continue; //there is no match
             for(let i = 0; i < 2; i++) if(verify[i] != 'nomatch') options[i].set(k,verify[i]);
         }
-
+        //if(check != 'undefined') return (options[0].size > 0 || options[1].size > 0);
         //get max points for piece
             var max = -1, move, piece, is_top;
             for(let i = 0; i < 2; i++){
                 for(let [k,v] of options[i]){
+                    console.log(k);
+                    
                     let points = this.hand.get(k).getPoints();
                     if(points > max) [max,piece,move,is_top] = [points,k,v,((i == 0)?true:false)];
                     else if(points == max) if(Math.round(Math.random()) == 1) [piece,move,is_top] = [k,v,((i == 0)?true:false)];
@@ -125,6 +127,7 @@ class Player{
         return [to_top,to_rotate,to_translate,rotate_side,translate,options_gp];        
     }
     findBestPlay(board,stack){//for AI player
+        for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none';
         var length = board.getDominos().length;  
         var max, move, piece, is_top,opt;
         //get all matched pieces
@@ -159,7 +162,8 @@ class Player{
         //if(to_translate) d.translatePieceX(translate);
         givePieces.apply(null,options_gp);
         console.log("domPiece AI: "+piece+": ["+d.getRec1()+","+d.getRec2()+"]\nsplitted: "+splitted);
-        turn(false);
+        for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'initial';
+        turn(true);
         makePlay(players[3]);
         return;
     }
@@ -167,11 +171,18 @@ class Player{
         if(stack.getHand().size == 0){
             console.log("Stack empty ========"); 
             if(this.player != 'Current'){
-                showPassTurn();
                 turn(true);
                 makePlay(players[3]);
+            }else{
+                document.getElementById("empty-stack").style.display = 'block';
+                document.body.style.overflowY = 'hidden';
+                document.getElementById('pass').onclick = function(){
+                    document.getElementById("empty-stack").style.display = 'none';
+                    document.body.style.overflowY = 'visible';
+                    players[0].findBestPlay(players[3]);
+                }
             }
-            return true;
+            return;
         }
 
         var keys = Array.from(stack.getHand());
@@ -185,7 +196,7 @@ class Player{
         var flipped = !(this.player == 'Current'), hover = !flipped;
         this.addPiece(new Array(keys),false,5,5,flipped,'5%',hover,false);
         if(this.player != 'Current')
-            infoTakeStack();
+            infoTakeStack(true);
         return false;
     }
     addPiece(pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover,is_stack){

@@ -58,24 +58,25 @@ async function startGame(pieces,player1, player2){
     gameLoop(document.getElementById(id).parentElement.id,id)        
 }
 
-async function isGameOver(board){
+function isGameOver(){
     //check points player 1
     if(players[0].getHand().size == 0) return true;
     if(players[1].getHand().size == 0) return true;
-    var dom = board.getDominos();
+    var dom = players[3].getDominos();
     if(dom.length == 0) return false;
+
     var [top,bot] = [dom[0],dom[dom.length-1]];
     var up,down;
 
     var span = document.getElementById(top.getId());
     span = span.style.transform.split('(')[1].split(')')[0];
     if(span == '0deg' || span == '180deg') up = top.getRec1();
-    up = (span == '90deg')? top.getRec2() : top.getRec1();
+    else up = (span == '90deg')? top.getRec2() : top.getRec1();
 
     span = document.getElementById(bot.getId());
     span = span.style.transform.split('(')[1].split(')')[0];
     if(span == '0deg' || span == '180deg') down = bot.getRec1();
-    down = (span == '90deg')? bot.getRec1() : bot.getRec2();
+    else down = (span == '90deg')? bot.getRec1() : bot.getRec2();
 
     if(up != down) return false;
     //up and down are the same, check closed;
@@ -89,6 +90,7 @@ var closed = false;
 async function gameLoop(player, piece){
     //piece is the img id
     //player first move
+    for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none';
      await sleep(1000);
     if(player == 'Player-AI'){
         players[0].playPiece(piece,players[3],0);
@@ -114,6 +116,7 @@ async function gameLoop(player, piece){
         player = 'Player-Current';
     }
     else{
+        for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'initial';
         console.log(" You must Make play");
         turn(true);
         makePlay(players[3]);  
@@ -124,22 +127,35 @@ function gameHasEnded(){
     //game is over
     if(!closed){
         //one player has 0
-        if(players[0].hand.size == 0) console.log("Player-"+players[0].player+" WON!");
-        else if(players[1].hand.size == 0) console.log("Player-"+players[1].player+" WON!");
+        if(players[0].hand.size == 0){console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);}
+        else if(players[1].hand.size == 0){console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);}
     }else{
         //game closed find one with lowest points
         var points = new Array(0,0);
         for(let i = 0; i < 2; i++)
             for(let [k,v] of players[0].getHand())
                 points[i] += v.getPoints();
-        if(points[0] > points[1]) console.log("Player-"+players[0].player+" WON!");
-        else if(points[0] < points[1]) console.log("Player-"+players[1].player+" WON!");
-        else console.log("DRAW");        
+        if(points[0] < points[1]){console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);}
+        else if(points[0] > points[1]){console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);}
+        else{console.log("DRAW"); gameResults('',true);}       
     }
+    quitGame.apply();
 }
 
 async function makePlay(board){
     //player will click on pice, launching pieceToPlay
+    if(isGameOver()){gameHasEnded(); return;}
+    var max,move,pice,is_top,opt;
+    [max,move,piece,is_top,opt] = players[1].findPlayerMatch(board);    
+    //has to go to stack
+    console.log("Was there a match? "+max);
+    if(max == -1){
+        infoStack(true);
+        console.log('No pieces => Stack');
+        var empty = players[1].takeFromStack(players[2]);
+        if(empty) return;
+        makePlay(players[3]); return;
+    }
     for(let [k,v] of players[1].hand){
         var span = document.getElementById(k);
         span.setAttribute('class','DM-normal');  
@@ -149,7 +165,6 @@ async function makePlay(board){
 
 function pieceToPlay(span,piece){
     span.onclick = function(span){
-        document.getElementById(this.id).style.pointerEvents = 'none';
         var dom = players[1].hand.get(piece);
         var length = players[3].getDominos().length;        
         var top = players[3].getDominos()[0], bot = players[3].getDominos()[length-1];
@@ -162,9 +177,11 @@ function pieceToPlay(span,piece){
             noMatch(piece); console.log("No match");
             span.style.filter = "invert(0%)";
             span.style.transform = "scale(1)";
-            span.removeEventListener('click',pieceToPlay(this,piece));
+            makePlay(players[3]); return;
         }else{
-            console.log("Match found");    
+            console.log("Match found");  
+            for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none'; 
+             
             //will disable hover for player pieces and increase scale for current
             for(let [k,v] of players[1].hand)document.getElementById(k).setAttribute('class','DM-normal');
             span.style.filter = "invert(100%)";span.style.transform = "scale(1.2)";
@@ -175,9 +192,31 @@ function pieceToPlay(span,piece){
             [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[0].logicPlacement(move,piece,true);
 
             //console.log([to_top,to_rotate,to_translate,rotate,translate]);
-
             console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
             
+
+            var str = "<span id=\"dont-place\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\">Don't Place</button></span>"
+            generateHtml(document.getElementById('Player-Stack'),str)
+            document.getElementById('dont-place').addEventListener('click',function(){
+                document.getElementById('Player-Stack').removeChild(document.getElementById("dont-place"));
+                var piece,pos,origin;
+                for(let p of players[3].getDominos()){
+                    let sp = p.img_id.split('-');
+                    if(sp.length > 3){pos = Number(sp[4]);origin = sp[0]+'-'+sp[1]+'-'+sp[2]; break;}
+                }
+                for(let i = 0; i < players[3].getDominos().length; i++){
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
+                        players[3].getDominos().splice(i,1);
+                    }
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
+                        players[3].getDominos().splice(i,1);
+                    }
+                }
+                var span = document.getElementById(origin); span.style.filter = "invert(0%)"; span.style.transform = "scale(1)";
+                for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'initial';
+            });
             if(Array.isArray(rotate)){
                 foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
                 foo(piece,2,false,true,to_translate,rotate[1],translate[1]);
@@ -210,46 +249,6 @@ function foo(piece,possible,to_top,to_rotate,to_translate,rotate,translate){
     //console.log(to_rotate +" "+ translate);
     
     if(to_rotate)d.rotatePiece(rotate,translate);
-    var str = "<span id=\"dont-place\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\">Don't Place</button></span>"
-        generateHtml(document.getElementById('Player-Stack'),str)
-        document.getElementById('dont-place').addEventListener('click',function(){
-            document.getElementById('Player-Stack').removeChild(document.getElementById("dont-place"));
-            var piece,pos,origin;
-            for(let p of players[3].getDominos()){
-                let sp = p.img_id.split('-');
-                if(sp.length > 3){pos = Number(sp[4]);origin = sp[0]+'-'+sp[1]+'-'+sp[2]; break;}
-            }
-            var index;
-            if(pos == 1){
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
-                        players[3].getDominos().splice(i,1);break;
-                    }
-                }
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){index = i;
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
-                        players[3].getDominos().splice(index,1);break;
-                    }
-                }
-            }else{
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
-                        players[3].getDominos().splice(i,1);break;
-                    }
-                }
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){index = i;
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2')); 
-                        players[3].getDominos().splice(index,1);break;
-                    }
-                }
-            }
-            var span = document.getElementById(origin); span.style.filter = "invert(0%)"; span.style.transform = "scale(1)";
-            span.style.pointerEvents = 'auto';
-        });
     piece_to_place.addEventListener('click',place(piece,possible));
 }
 function place(piece,poss){
@@ -261,7 +260,7 @@ function place(piece,poss){
         var origin = piece.split('-'); 
         var poss = Number(origin[4]);
         origin = origin[0]+'-'+origin[1]+'-'+origin[2];
-        //console.log("piece: "+piece+" poss:"+poss +" origin: "+origin);
+        console.log("piece: "+piece+" poss:"+poss +" origin: "+origin);
         
         pc.removeChild(document.getElementById(origin));
         document.getElementById(piece).style.filter = 'invert(0%)';
@@ -270,7 +269,7 @@ function place(piece,poss){
                 //console.log("found the 2º");                
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
-                    players[3].getDominos().splice(i,1); break;
+                    players[3].getDominos().splice(i,1);
                 }
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')) players[3].getDominos()[i].img_id = origin;
             }
@@ -279,12 +278,13 @@ function place(piece,poss){
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
                     //console.log("found the 1st");                    
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
-                    players[3].getDominos().splice(i,1); break;
+                    players[3].getDominos().splice(i,1);
                 }
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')) players[3].getDominos()[i].img_id = origin;
             }
         }
         document.getElementById(piece).setAttribute('id',origin);
+        players[1].hand.delete(origin);
         for(let [k,v] of players[1].hand){var span = document.getElementById(k); span.removeEventListener('click',pieceToPlay(span,k));}
         players[0].findBestPlay(players[3],players[2]);
         turn(true);
@@ -294,18 +294,23 @@ function place(piece,poss){
 function turn(my_turn){
     var s = my_turn? "It is your turn to play" : "It is Player-"+players[0].player+"'s turn to play";
     var str = 
-        "<div id=\"no-match\" class=\"modal\">"
+        "<div id=\"turn\" class=\"modal\">"
             + "<form class=\"login-modal-content animate\" action=\"#\">"
                 + "<div class=\"login-container\"><h2>Game Turn</h2></div>"
-                + "<div class=\"login-container\"><center>"+s+"</center></div>"
+                + "<div class=\"login-container\"><center><h2>"+s+"</h2></center></div>"
                 + "<div class=\"login-container\" styler=\"background-color:#f1f1f1\">"
-                    + "<button type=\"button\" onclick=\"hideNoMatch()\" class=\"submit\">OK</button>"
+                    + "<button id='ok-turn' type=\"button\" class=\"submit\">OK</button>"
                 + "</div>"
             + "</form>"
         + "</div>";
     generateHtml(document.getElementById('ai-page'), str);
-    document.getElementById('no-match').style.zIndex = '5';
-    document.getElementById('no-match').style.display = 'block';
+    document.getElementById('turn').style.zIndex = '5';
+    document.getElementById('turn').style.display = 'block';
+    document.getElementById('ok-turn').onclick = function(){
+        var game_p = document.getElementById('ai-page').removeChild(document.getElementById('turn'));
+        
+    }
+
 }
 function noMatch(piece){
     var str = 
@@ -314,15 +319,53 @@ function noMatch(piece){
                 + "<div class=\"login-container\"><h2>Piece has no match</h2></div>"
                 + "<div class=\"login-container\"><center><img src=\"Assets/DominoPieces/"+piece+".png\" width=\"10%\"></center></div>"
                 + "<div class=\"login-container\" styler=\"background-color:#f1f1f1\">"
-                    + "<button type=\"button\" onclick=\"hideNoMatch()\" class=\"submit\">OK</button>"
+                    + "<button id='ok-no-match' type=\"button\" class=\"submit\">OK</button>"
                 + "</div>"
             + "</form>"
         + "</div>";
     generateHtml(document.getElementById('ai-page'), str);
     document.getElementById('no-match').style.zIndex = '5';
     document.getElementById('no-match').style.display = 'block';
+    document.getElementById('ok-no-match').onclick = function(){
+        document.getElementById('ai-page').removeChild(document.getElementById('no-match'));
+    }
 }
-function hideNoMatch(){
-    var game_p = document.getElementById('ai-page');
-    game_p.removeChild(document.getElementById('no-match'));
+
+function infoStack(is_me){
+    var s = (is_me != 'undefined')? 'You have no matching pieces<br>Taking from stack' : 'Adversary is taking pieces from stack';
+    var str = 
+        "<div id=\"taking-from-stack\" class=\"modal\">"
+            + "<form class=\"login-modal-content animate\" action=\"#\">"
+                + "<div class=\"login-container\"><h2>"+s+"</h2></div>"
+                + "<div class=\"login-container\" styler=\"background-color:#f1f1f1\">"
+                    + "<button id='ok-taking' type=\"button\" class=\"submit\">OK</button>"
+                + "</div>"
+            + "</form>"
+        + "</div>";
+    generateHtml(document.getElementById('ai-page'), str);
+    document.getElementById('taking-from-stack').style.zIndex = '5';
+    document.getElementById('taking-from-stack').style.display = 'block';
+    document.getElementById('ok-taking').onclick = function(){
+        document.getElementById('ai-page').removeChild(document.getElementById('taking-from-stack'));
+    }
+}
+
+function gameResults(winner,draw){
+    var s = (winner == "Player-"+players[1].player)? 'You <b style=\"color: green;\">WON</b>' : 'You <b style=\"color: red;\">lost :(</b>';
+    var s = draw? 'Game was a <b>draw</b>' : s;
+    var str = 
+        "<div id=\"game-results\" class=\"modal\">"
+            + "<form class=\"login-modal-content animate\" action=\"#\">"
+                + "<div class=\"login-container\"><h1>"+s+"</h1></div>"
+                + "<div class=\"login-container\" styler=\"background-color:#f1f1f1\">"
+                    + "<button id='ok-results' type=\"button\" class=\"submit\">OK</button>"
+                + "</div>"
+            + "</form>"
+        + "</div>";
+    generateHtml(document.getElementById('ai-page'), str);
+    document.getElementById('game-results').style.zIndex = '5';
+    document.getElementById('game-results').style.display = 'block';
+    document.getElementById('ok-results').onclick = function(){
+        document.getElementById('ai-page').removeChild(document.getElementById('game-results'));
+    }
 }

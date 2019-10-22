@@ -74,6 +74,7 @@ class Domino{
     showPiece(){return this.position;}
     equal(domino){return this.getPoints() == domino.getPoints();}
     match(domino,relative_to,size){
+        //console.log("Domino.match: "+domino.img_id);        
         var span = document.getElementById(domino.img_id);
         var splitted = span.style.transform.split('(')[1].split(')')[0];
         var [r1,r2] = [this.rec1,this.rec2];
