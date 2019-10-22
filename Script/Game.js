@@ -115,7 +115,7 @@ async function gameLoop(player, piece){
     }
     else{
         console.log(" You must Make play");
-        //turn(true);
+        turn(true);
         makePlay(players[3]);  
     }
 }
@@ -149,124 +149,148 @@ async function makePlay(board){
 
 function pieceToPlay(span,piece){
     span.onclick = function(span){
+        document.getElementById(this.id).style.pointerEvents = 'none';
         var dom = players[1].hand.get(piece);
-        var length = players[3].getDominos().length;
-        
-        var top = players[3].getDominos()[0], bot = players[3].getDominos()[length-1]
-        var verify = new Array(dom.match(top,'left',length),dom.match(bot,'right',length)); //get the 2 arrays for all possibilities
-        console.log("OK |"+piece+"|");
-        var span = document.getElementById(piece);
+        var length = players[3].getDominos().length;        
+        var top = players[3].getDominos()[0], bot = players[3].getDominos()[length-1];
+        //Test match
+            var verify = new Array(dom.match(top,'left',length),dom.match(bot,'right',length)); //get the 2 arrays for all possibilities
 
-        if(verify[0] == 'nomatch' && verify[1] == 'nomatch'){//no match
+        var span = document.getElementById(piece);
+        //No match
+        if(verify[0] == 'nomatch' && verify[1] == 'nomatch'){
             noMatch(piece); console.log("No match");
             span.style.filter = "invert(0%)";
             span.style.transform = "scale(1)";
-            span.removeEventListener('click',pieceToPlay(span,piece));
+            span.removeEventListener('click',pieceToPlay(this,piece));
         }else{
             console.log("Match found");    
             //will disable hover for player pieces and increase scale for current
-            for(let [k,v] of players[1].hand){
-                document.getElementById(k).setAttribute('class','DM-normal'); 
-                //if(k != piece) document.getElementById(k).removeEventListener("click");
-            }
-            span.style.filter = "invert(100%)";
-            span.style.transform = "scale(1.2)";
-            //span.setAttribute('id',piece+"-toPlay");
+            for(let [k,v] of players[1].hand)document.getElementById(k).setAttribute('class','DM-normal');
+            span.style.filter = "invert(100%)";span.style.transform = "scale(1.2)";
+            
             var move = verify[0] == 'nomatch'? verify[1] : verify[0];
+
             var to_top,to_rotate,to_translate,rotate,translate,options_gp;
             [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[0].logicPlacement(move,piece,true);
-            console.log([to_top,to_rotate,to_translate,rotate,translate]);
+
+            //console.log([to_top,to_rotate,to_translate,rotate,translate]);
+
+            console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
             
             if(Array.isArray(rotate)){
-                dontPlace(piece,1);                
                 foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
                 foo(piece,2,false,true,to_translate,rotate[1],translate[1]);
-            }
-            else{
-                dontPlace(piece,1);
-                foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);
-            }
+            }else{foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);}
         }
     }
 }
 function foo(piece,possible,to_top,to_rotate,to_translate,rotate,translate){
-
     var dom = players[1].hand.get(piece);
-    console.log("foo: "+piece);
-    
-    var piece_to_place = createPiece(piece,false,1,1,false,'5%',false);
-    piece_to_place.setAttribute('id',piece+'-Possible-'+possible);
-    console.log("foo: span id "+piece_to_place.id);
-    
-    piece_to_place.setAttribute('class','DM-normal');
-    piece_to_place.style.filter = 'invert(100%)';
-    piece_to_place.style.display = 'flex';
-
+    //console.log("foo: "+piece);
     var index, length = players[3].getDominos().length;
-    var copy = dom.copyDomino();
-    copy.img_id = piece+'-Possible-'+possible;
-    console.log("DOM copy img id: "+copy.img_id);
-    
-    var parent;
-    parent = document.getElementById("Game-Board");
-    if(to_top){
-        index = 0; players[3].addDominoTop(copy,index);
-        var first = parent.firstElementChild;
-        parent.insertBefore(piece_to_place,first);
-    }
-    else{
-        index = length; players[3].addDominoBot(copy,index);
-        parent.appendChild(piece_to_place);
-    }
+    var copy = dom.copyDomino(); copy.img_id = piece+'-Possible-'+possible;
+    //console.log("DOM copy img id: "+copy.img_id);
+
+    var parent; parent = document.getElementById("Game-Board");
+    var opt = new Array(piece,false,1,1,false,'5%',false,'');
+    var piece_to_place;
+
+    if(to_rotate) opt[7] = rotate;
+    piece_to_place = createPiece.apply(null,opt);
+
+    piece_to_place.setAttribute('id',piece+'-Possible-'+possible);
+    //console.log("foo: span id "+piece_to_place.id);    
+    piece_to_place.setAttribute('class','DM-normal'); piece_to_place.style.filter = 'invert(100%)'; piece_to_place.style.display = 'block';
+
+    if(to_top){ index = 0; players[3].addDominoTop(copy,index); var first = parent.firstElementChild;parent.insertBefore(piece_to_place,first);}
+    else{index = length; players[3].addDominoBot(copy,index);parent.appendChild(piece_to_place);}
 
     var d = players[3].getDominos()[index];
-    console.log(to_rotate +" "+ translate);
+    //console.log(to_rotate +" "+ translate);
     
-    if(to_rotate) d.rotatePiece(rotate,translate);
-    if(to_translate) d.translatePieceX(translate);
+    if(to_rotate)d.rotatePiece(rotate,translate);
+    var str = "<span id=\"dont-place\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\">Don't Place</button></span>"
+        generateHtml(document.getElementById('Player-Stack'),str)
+        document.getElementById('dont-place').addEventListener('click',function(){
+            document.getElementById('Player-Stack').removeChild(document.getElementById("dont-place"));
+            var piece,pos,origin;
+            for(let p of players[3].getDominos()){
+                let sp = p.img_id.split('-');
+                if(sp.length > 3){pos = Number(sp[4]);origin = sp[0]+'-'+sp[1]+'-'+sp[2]; break;}
+            }
+            var index;
+            if(pos == 1){
+                for(let i = 0; i < players[3].getDominos().length; i++){
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
+                        players[3].getDominos().splice(i,1);break;
+                    }
+                }
+                for(let i = 0; i < players[3].getDominos().length; i++){
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){index = i;
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
+                        players[3].getDominos().splice(index,1);break;
+                    }
+                }
+            }else{
+                for(let i = 0; i < players[3].getDominos().length; i++){
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
+                        players[3].getDominos().splice(i,1);break;
+                    }
+                }
+                for(let i = 0; i < players[3].getDominos().length; i++){
+                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){index = i;
+                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2')); 
+                        players[3].getDominos().splice(index,1);break;
+                    }
+                }
+            }
+            var span = document.getElementById(origin); span.style.filter = "invert(0%)"; span.style.transform = "scale(1)";
+            span.style.pointerEvents = 'auto';
+        });
     piece_to_place.addEventListener('click',place(piece,possible));
 }
 function place(piece,poss){
     var piece_to_place = document.getElementById(piece+"-Possible-"+poss); //span in board
     piece_to_place.onclick = function(poss){
-        var pc = document.getElementById("Player-Current");//
-
+        var pc = document.getElementById("Player-Current");
+        document.getElementById('Player-Stack').removeChild(document.getElementById("dont-place"));
         var piece = this.getAttribute('id');
         var origin = piece.split('-'); 
         var poss = Number(origin[4]);
         origin = origin[0]+'-'+origin[1]+'-'+origin[2];
-        console.log("piece: "+piece+" poss:"+poss +" origin: "+origin);
+        //console.log("piece: "+piece+" poss:"+poss +" origin: "+origin);
         
         pc.removeChild(document.getElementById(origin));
         document.getElementById(piece).style.filter = 'invert(0%)';
-        if(poss == 1){
-            console.log("entered pos 1");
-            
+        if(poss == 1){//console.log("entered pos 1");            
             for(let i = 0; i < players[3].getDominos().length; i++){
-                console.log("found the 2º");
-                
+                //console.log("found the 2º");                
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
+                    players[3].getDominos().splice(i,1); break;
                 }
+                if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')) players[3].getDominos()[i].img_id = origin;
             }
-        }else{console.log("entered pos 2");
+        }else{//console.log("entered pos 2");
             for(let i = 0; i < players[3].getDominos().length; i++){
                 if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
-                    console.log("found the 1st");                    
+                    //console.log("found the 1st");                    
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
+                    players[3].getDominos().splice(i,1); break;
                 }
+                if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')) players[3].getDominos()[i].img_id = origin;
             }
         }
         document.getElementById(piece).setAttribute('id',origin);
-        console.log("got hre");
-        //document.getElementById(origin).removeEventListener('click',place(piece,poss));
-        //player = 'Player-AI';
-        hideDontPlace(piece);
+        for(let [k,v] of players[1].hand){var span = document.getElementById(k); span.removeEventListener('click',pieceToPlay(span,k));}
         players[0].findBestPlay(players[3],players[2]);
         turn(true);
     }
-    //player = 'Player-AI';
 }
+
 function turn(my_turn){
     var s = my_turn? "It is your turn to play" : "It is Player-"+players[0].player+"'s turn to play";
     var str = 
@@ -301,48 +325,4 @@ function noMatch(piece){
 function hideNoMatch(){
     var game_p = document.getElementById('ai-page');
     game_p.removeChild(document.getElementById('no-match'));
-}
-function dontPlace(piece,pos){
-    var str = "<span id=\"dont-place\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" onclick=\"hideDontPlace(\'"+piece+"-Possible-"+pos+"\')\" class=\"login-cancelbtn\">Don't Place</button></span>"
-    generateHtml(document.getElementById('Player-Stack'),str)
-}
-function hideDontPlace(piece){
-        var origin = piece.split('-');
-        var pos = Number(origin[4]);
-        origin = origin[0]+'-'+origin[1]+'-'+origin[2];
-        var index;
-            if(pos == 1){
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
-                        break;
-                    }
-                }
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
-                        index = i;
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
-                        break;
-                    }
-                }
-                players[3].getDominos().splice(index,1);
-            }else{
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
-                        break;
-                    }
-                }
-                for(let i = 0; i < players[3].getDominos().length; i++){
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')){
-                        index = i;
-                        document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2')); break;
-                    }
-                }
-                players[3].getDominos().splice(index,0);b.getDominos().splice(index,1);
-            }
-            var span = document.getElementById(origin);
-            span.style.filter = "invert(0%)";
-            span.style.transform = "scale(1)";
-            document.getElementById('Player-Stack').removeChild(document.getElementById("dont-place"));
 }

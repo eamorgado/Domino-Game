@@ -19,17 +19,17 @@ class Player{
             var b = document.getElementById(board.id);
             var parent = document.getElementById('Player-'+this.player);
             parent.removeChild(document.getElementById(id));
-            
-            givePieces(b,new Array(id),false,1,1,false,'5%',false,false,before);
             var d = board.getDominos()[indexmatch];
-            d.rotatePiece('left'); 
-            //rotate if necessary
-                if(d.isDouble()) d.rotatePiece('right');
+            var side = '';
+            //console.log("Giving ["+d.getRec1()+","+d.getRec2()+"] and isDouble="+d.isDouble()+"\n\n");
+            
+            if(!d.isDouble()){d.rotatePiece('left'); side = 'left'};
+            givePieces(b,new Array(id),false,1,1,false,'5%',false,before,side);
     }
     findPlayerMatch(board){
         var options = new Array(new Map(),new Map()); //options for top and bot
-        var length = board.getDominos().length;
-        var dom = board.getDominos();
+        var length = players[3].getDominos().length;
+        var dom = players[3].getDominos();
         var top = dom[0], bot = dom[length-1];
 
         for(let [k,v] of this.hand){
@@ -54,7 +54,7 @@ class Player{
         var splitted = move.split('-');
         var pieces = new Array(piece);
         var b = document.getElementById("Game-Board");
-        var options_gp = new Array(b,pieces,false,1,1,false,'5%',false,false);
+        let options_gp = new Array(b,pieces,false,1,1,false,'5%',false,false,'');
         var to_top = false, to_rotate = true, rotate_side,translate, to_translate = false;
         
         switch(splitted.length){
@@ -65,7 +65,7 @@ class Player{
                             if(is_player){
                                 to_rotate = true;
                                 rotate_side = new Array('right','left'); //top-bot
-                                translate = new Array('2vw','-2vw');
+                                translate = new Array('-2vw','-2vw');
                             }else{
                                 if(Math.round(Math.random()) == 1){to_top = false; to_rotate = true; rotate_side = 'left'; translate = '-2vw';}//bot
                                 else{to_top = to_rotate = true; rotate_side = 'right'; translate = '2vw';}//top
@@ -86,20 +86,24 @@ class Player{
                                 else{to_top = to_rotate = true; rotate_side = 'left'; translate = '-2vw';}
                             }
                         }else{
-                            to_top = !((splitted[2] == 'right'));to_rotate = true;
+                            to_top = !(splitted[2] == 'right');to_rotate = true;
                             [rotate_side,translate] = [splitted[2],(splitted[2] == 'right')? '-2vw' : '2vw'];
                         }  
                     break;
                 }
             break;
-            case 4: // 2sides-{left,right}-comp | {r1,r2}-{left,right}-comp
+            case 4: // 2sides-{left,right,top,bot}-comp | {r1,r2}-{left,right}-comp
                 switch(splitted[1]){
                     case '2sides': 
-                        to_top = (splitted[2] == 'left'); to_rotate = false; to_translate = true;
-                        translate = ((splitted[2] == 'left')? '-2.5vw' : '2.5vw');
+                        if(splitted[2] == 'top'){to_top = true; to_rotate = false;}
+                        else if(splitted[2] == 'bot'){to_top = to_rotate = false;}
+                        else{
+                            to_top = (splitted[2] == 'left'); to_rotate = false; to_translate = true;
+                            translate = ((splitted[2] == 'left')? '-2.5vw' : '2.5vw');
+                        }
                     break;
                     case 'r1':
-                        to_top = (splitted[2] == 'left'); to_rotate = true; 
+                        to_top = !(splitted[2] == 'left'); to_rotate = true; 
                         [rotate_side,translate] = (to_top? ['right','2vw'] : ['left','-2vw']);
                     break;
                     case 'r2':
@@ -115,6 +119,9 @@ class Player{
                 translate = ((splitted[1] == 'r1')? (top? '5vw':'-4.7vw') : (top? '-4.7vw':'4.7vw'));
             break;
         }
+        to_translate = false;
+        //console.log("Rotate side " +rotate_side);
+        
         return [to_top,to_rotate,to_translate,rotate_side,translate,options_gp];        
     }
     findBestPlay(board,stack){//for AI player
@@ -143,13 +150,15 @@ class Player{
         var index;
         if(to_top){index = 0; board.addDominoTop(copy,index); options_gp[8] = true;}
         else{index = length; board.addDominoBot(copy,index);}
-        givePieces.apply(null,options_gp);
-        document.getElementById(piece).style.display = 'block'
         var d = board.getDominos()[index];
-        if(to_rotate) d.rotatePiece(rotate_side,translate); 
-        if(to_translate) d.translatePieceX(translate);
 
-        console.log("domPiece "+piece+": ["+d.getRec1()+","+d.getRec2()+"]\nsplitted: "+splitted);
+        if(to_rotate){
+            options_gp[9] = rotate_side;
+            d.rotatePiece(rotate_side,translate); 
+        }
+        //if(to_translate) d.translatePieceX(translate);
+        givePieces.apply(null,options_gp);
+        console.log("domPiece AI: "+piece+": ["+d.getRec1()+","+d.getRec2()+"]\nsplitted: "+splitted);
         turn(false);
         makePlay(players[3]);
         return;

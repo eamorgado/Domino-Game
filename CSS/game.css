@@ -23,7 +23,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     animation: spin 3.5s linear infinite;
 }
 
-
+.DM-Normal{position: fixed;}
 .DM-flipped:hover , .DM-displayed:hover{
     animation: shake 2.5s;
     animation-iteration-count: infinite; 
@@ -94,6 +94,9 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 
 
 .player-class{
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: baseline; /* align vertical */
     width: 100vw;
     overflow-x: auto;
     padding: 20px 0 20px 0;
@@ -115,12 +118,15 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 
 
 #Game-Board{
+    position: sticky;
+    top: 0;
     display: flex;
-    justify-content: center; /* align horizontal */
-    align-items: baseline; /* align vertical */
+    justify-content: center;
+    align-items: center; /* align vertical */
+    flex-direction: row;
     overflow-x: auto;
     width: 90vw;
-    height: 20vh;
+    height: 100%;
     padding: 2vh 5vw 2vh 5vw;
     margin-top: 2vh;
     margin-bottom: 2vh;

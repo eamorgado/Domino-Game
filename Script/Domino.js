@@ -31,8 +31,7 @@ class Domino{
     //Constructor for blank domino piece
     constructor(rec1,rec2,flipped,position,owner,img_id){
         this.position = position;
-        this.rec1 = rec1;
-        this.rec2 = rec2;
+        this.rec1 = rec1; this.rec2 = rec2;
         this.points = rec1 + rec2;
         this.owner = owner;
         this.flipped = flipped;
@@ -51,8 +50,11 @@ class Domino{
     getPoints(){return this.points;}
 
     newOwner(owner){this.owner = owner;}
-    translatePieceX(translate){
+    translatePieceX(translate){var origin;
         var span = document.getElementById(this.img_id);
+        if(translate == 'top_part')
+            origin = (-1 * span.height/4) +'px';
+        else origin = (span.height/4) +'px';
         span.style.webkitTransform = "translateX("+translate+")";
         span.style.mozTransform = "translateX("+translate+")";
         span.style.msTransform = "translateX("+translate+")";
@@ -60,58 +62,8 @@ class Domino{
         span.style.transform = "translateX("+translate+")";
     }
     rotatePiece(side,translate){
-        var span = document.getElementById(this.img_id);
         //var img = span.firstElementChild;
-        var r1 = this.rec1, r2 = this.rec2;
-        var position, angle
-        var splitted = span.style.transform;
-        //console.log("rotatePiece ["+r1+","+r2+"] splitted before split: |"+splitted+"|");
-        splitted = splitted.split('(')[1].split(')')[0];
-        //console.log("rotatePiece ["+r1+","+r2+"] splitted after split: |"+splitted+"|");
-         
-        if(this.position == 'vertical'){
-            position = 'horizontal';
-            if(side == 'left'){
-                if(splitted == '0deg')angle = 270;
-                else if(splitted == '180deg')angle = 90;
-                else console.log("rotatePiece: error rotating vertical left |"+splitted+"| "+(splitted == '0deg')); 
-            }
-            else if(side == 'right'){
-                if(splitted == '0deg')angle = 90;
-                else if(splitted == '180deg')angle = 270;
-                else console.log("rotatePiece: error rotating vertical right |"+splitted+"| "+(splitted == '0deg')); 
-            }
-        }
-        else{          
-            position = 'vertical';
-            if(side == 'left'){
-                if(splitted == '90deg')angle = 0;
-                else if(splitted == '270deg')angle = 180;
-                else console.log("rotatePiece: error rotating horizontal left |"+splitted+"|"); 
-            }
-            else if(side == 'right'){
-                if(splitted == '90deg') angle = 180;
-                else if(splitted == '270deg') angle = 0;
-                else console.log("rotatePiece: error rotating horizontal right |"+splitted+"|"); 
-            }
-        }
-        //[this.rec1,this.rec2] = [r1,r2];
-        this.position = position;
-        var str = 'rotate('+angle+'deg)';
-        //if(translate !== 'undefined') str += " translateY("+translate+")"
-        span.style.webkitTransform = str;
-        span.style.mozTransform = str;
-        span.style.msTransform = str;
-        span.style.oTransform = str;
-        span.style.transform = str;
-        if(translate !== 'undefined'){
-            span.style.webkitTransform = str + " translateY("+translate+")";
-            span.style.mozTransform = str + " translateY("+translate+")";
-            span.style.msTransform = str + " translateY("+translate+")";
-            span.style.oTransform =  str + " translateY("+translate+")";
-            span.style.transform =  str + " translateY("+translate+")";
-        }
-        //console.log("rotatePiece ["+r1+","+r2+"] of position "+this.position+" angle("+angle+") transform: |"+span.style.transform+"|");
+        this.position = (this.position == 'vertical')? 'horizontal' : 'vertical';
     }
     copyDomino(){
         var d = this.isDouble();

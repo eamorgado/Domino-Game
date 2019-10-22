@@ -12,51 +12,78 @@ var pieces = new Array("DM-0-0","DM-0-1","DM-0-2","DM-0-3", "DM-0-4","DM-0-5", "
         "DM-6-6");
 
 
-function createPiece(id, add_onclick,left,right,is_flipped,width,hover){
+function createPiece(id, add_onclick,left,right,is_flipped,width,hover,side){
     var path = 'Assets/DominoPieces/';
     var img = document.createElement('img');
     img.src = path + ((is_flipped)?'DM-Flip':id) + '.png';
-    img.style.width = '100%';    
+    img.style.width = '5%';
+    img.style.height = '5%';
        
-    var span_piece = document.createElement('span');
-        span_piece.setAttribute('class',('DM-'+((is_flipped)? 'flipped':'displayed')));        
-        span_piece.setAttribute('id',id);
-        span_piece.style.display = 'inline-block';
-        span_piece.appendChild(img);
-        span_piece.style.marginLeft = left + 'px';
-        span_piece.style.marginRight = right + 'px';
-        span_piece.style.width = width;
-        span_piece.style.transform = 'rotate(0deg)';
-        if(add_onclick){
-            img.src = path + 'DM-Flip.png';
-            var onclick = span_piece.getAttribute('onclick');
-            span_piece.onclick = function(){
-                if(span_piece.className == 'DM-flipped'){
-                    span_piece.firstChild.src = path + id + '.png';
-                    span_piece.className = 'DM-displayed';
-                }
-                else{
-                    span_piece.firstChild.src = path + 'DM-Flip.png';
-                    span_piece.className = 'DM-flipped';
-                }
+    //var img = document.createElement('div');
+    img.setAttribute('class',('DM-'+((is_flipped)? 'flipped':'displayed')));        
+    img.setAttribute('id',id); img.style.display = 'fixed';
+    img.style.marginLeft = left + 'px'; img.style.marginRight = right + 'px';
+    img.style.transform = 'rotate(0deg)';
+    
+    if(add_onclick){
+        img.src = path + 'DM-Flip.png';
+        var onclick = img.getAttribute('onclick');
+            img.onclick = function(){
+                if(img.className == 'DM-flipped'){img.src = path + id + '.png'; img.className = 'DM-displayed';}
+                else{img.src = path + 'DM-Flip.png'; img.className = 'DM-flipped';}
             };
         }
     if(hover){
-        span_piece.onmouseover = function(){
-            span_piece.firstChild.style.filter = 'invert(100%)';
-            span_piece.firstChild.style.border = '3px outset whitesmoke';
-            span_piece.firstChild.style.borderRadius = '15%';       
+        img.onmouseover = function(){
+            img.style.filter = 'invert(100%)';
+            img.style.border = '3px outset whitesmoke';
+            img.style.borderRadius = '15%';       
         };
-        span_piece.onmouseout = function(){
-            span_piece.firstChild.style.filter = 'invert(0%)';
-            span_piece.firstChild.style.border = '0px hidden';
-            span_piece.firstChild.style.borderRadius = '0%';       
+        img.onmouseout = function(){
+            img.style.filter = 'invert(0%)';
+            img.style.border = '0px hidden';
+            img.style.borderRadius = '0%';       
         };
     }
-    else{span_piece.className = 'DM-normal';}
-    return span_piece;
+    else{img.className = 'DM-normal';}
+
+    var splitted = img.style.transform;
+        splitted = splitted.split('(')[1].split(')')[0];
+        var angle = splitted; var origin,translate = new Array();
+        if(splitted == '0deg' || splitted == '180deg'){
+            if(side == 'left'){
+                if(splitted == '0deg')angle = '270deg';
+                else if(splitted == '180deg')angle = '90deg';
+                else console.log("rotatePiece: error rotating vertical left |"+splitted+"| "+(splitted == '0deg')); 
+            }
+            else if(side == 'right'){
+                if(splitted == '0deg')angle = '90deg';
+                else if(splitted == '180deg')angle = '270deg';
+                else console.log("rotatePiece: error rotating vertical right |"+splitted+"| "+(splitted == '0deg')); 
+            }
+        }else{
+            if(side == 'left'){
+                if(splitted == '90deg')angle = '0deg';
+                else if(splitted == '270deg')angle = '180deg';
+                else console.log("rotatePiece: error rotating horizontal left |"+splitted+"|"); 
+            }
+            else if(side == 'right'){
+                if(splitted == '90deg') angle = '180deg';
+                else if(splitted == '270deg') angle = '0deg';
+                else console.log("rotatePiece: error rotating horizontal right |"+splitted+"|"); 
+            }
+        }
+        //console.log("\n\nRotating "+id+" start: "+splitted+" side:"+side+" finish:"+angle+"\n\n");
+        var str = 'rotate('+angle+')';
+        //img.style.transformOrigin = 'center bottom';
+        img.style.webkitTransform = str;
+        img.style.mozTransform = str;
+        img.style.msTransform = str;
+        img.style.oTransform = str;
+        img.style.transform = str;
+    return img;
 }
-function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right,is_flipped, width,hover,before){
+function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right,is_flipped, width,hover,before,side){
     var receiver = rec, choice = false;
     if(Array.isArray(rec)) [receiver,choice] = [rec[0],true]
     for(let p of pieces_array){
@@ -64,9 +91,9 @@ function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right,is_
         if(before){
             var first = receiver.firstElementChild
             //console.log("givePieces: adding before");            
-            receiver.insertBefore(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover),first);
+            receiver.prepend(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover,side));
         }
-        else receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover));
+        else receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width,hover,side));
     }
 }
 
@@ -80,7 +107,7 @@ function displayInfo(receiver, inner_text, option){
     document.getElementById("ai-page").firstChild.nextSibling.style.visibility = "hidden";
     var str = 
         "<div id=\"info-popup\" class=\"modal-info\">"
-            + "<span onclick=\"closeInfo(\'option\')\" class=\"close-login\" title=\"Close info\" style=\"font-size: 60px;\">&times;</span>"
+            + "<span onclick=\"closeInfo(\'option\')\" class=\"close-login\" title=\"Close info\" style=\"font-size: 60px;\">&times;</img>"
             + "<div id=\"info-cnt\" class=\"mi-content animate\">"
                 + inner_text
             + "</div>"
