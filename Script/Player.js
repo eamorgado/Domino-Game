@@ -128,6 +128,7 @@ class Player{
     }
     findBestPlay(board,stack){//for AI player
         for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none';
+        if(isGameOver()){gameHasEnded(); return;}
         var length = board.getDominos().length;  
         var max, move, piece, is_top,opt;
         //get all matched pieces
@@ -136,7 +137,10 @@ class Player{
             if(max == -1){
                 console.log('No pieces => Stack');
                 var empty = this.takeFromStack(stack);
-                if(empty) return;
+                if(empty){
+                    turn(true);
+                    makePlay(players[3]); return;
+                }
                 this.findBestPlay(board,stack); return;
             }
         
@@ -168,24 +172,21 @@ class Player{
         return;
     }
     takeFromStack(stack){
-        if(stack.getHand().size == 0){
+        stack = players[2];
+        if(stack.hand.size == 0){
             console.log("Stack empty ========"); 
-            if(this.player != 'Current'){
-                turn(true);
-                makePlay(players[3]);
-            }else{
+            if(this.player != 'Current'){}else{
                 document.getElementById("empty-stack").style.display = 'block';
                 document.body.style.overflowY = 'hidden';
                 document.getElementById('pass').onclick = function(){
                     document.getElementById("empty-stack").style.display = 'none';
                     document.body.style.overflowY = 'visible';
-                    players[0].findBestPlay(players[3]);
                 }
             }
-            return;
+            return true;
         }
 
-        var keys = Array.from(stack.getHand());
+        var keys = Array.from(stack.hand);
         keys = keys[Math.floor(Math.random() * keys.length)];//random element in stack
         keys = keys[0];
         stack.hand.delete(keys);

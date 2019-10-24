@@ -12,14 +12,14 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     position: absolute;
     display: none;
     margin-top: 0;
-    top: -25vh;
-    left: 5vw;
+    top: 10vw;
+    left: 10vw;
     display: inline-block;
     border: 16px solid black; /* Light grey */
     border-top: 16px solid #F9C426; /* Blue */
     border-radius: 50%;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     animation: spin 3.5s linear infinite;
 }
 
@@ -34,8 +34,8 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     position: absolute;
     display: none;
     width: 5vw;
-    top: -16.5vh;
-    left: 40vw;
+    top: 5%;
+    left: 25%;
 }
 #inst-on-game:hover{
     filter: invert(50%);
@@ -65,8 +65,8 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 #quit-game{
     background-color: #f44336;
     position: relative;
-    top: -150px;
-    left: -20%;
+    top: 2vw;
+    left: -40%;
     display:none
 }
 
@@ -107,7 +107,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
 
 #Player-Stack{
     text-align: center;
-    font-size: 2vw;
+    font-size: 50px;
     font-weight: 900;
     margin-bottom: 3vh;
     padding-bottom: 2vh;
@@ -157,6 +157,17 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     border: 2px solid #888;
 }
 
+#dont-place{
+    position: absolute;
+    height: 10vh;
+    top: 7%;
+    right: 10%;
+    transform: scale(2);
+}
+
+#dont-place:hover{
+    filter: invert(100%);
+}
 
 #game-in-progress{
     display: none;
@@ -180,5 +191,11 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     animation: scroll 20s linear infinite;
 }
 
+
+.leaders{
+    color: #444;
+    font-size: 25px;
+    
+}
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/

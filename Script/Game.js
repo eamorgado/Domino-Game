@@ -21,8 +21,9 @@ function filterArray(source, to_remove){
     return tmp_source;
 }
 
-var players;
+var players, closed;
 async function startGame(pieces,player1, player2){
+    closed = false;
     //start players + stack
         players = new Array(3);
             [players[0],players[1],players[2],players[3]] = [new Player(player1),new Player(player2),new Player('Stack'),new Board('Game-Board')];
@@ -83,10 +84,10 @@ function isGameOver(){
     var count = 0;
     for(let p of dom)
         if(p.getRec1() == up || p.getRec2() == up) count++;
-    closed = count == 7;
+    closed = count >= 7;
     return closed;
 }
-var closed = false;
+
 async function gameLoop(player, piece){
     //piece is the img id
     //player first move
@@ -110,8 +111,7 @@ async function gameLoop(player, piece){
         if(player == 'Player-AI'){
             console.log("AI to play");
             //await sleep(1000);
-            players[0].findBestPlay(players[3],players[2]);   
-            turn(true);     
+            players[0].findBestPlay(players[3],players[2]);        
         }
         player = 'Player-Current';
     }
@@ -125,20 +125,34 @@ async function gameLoop(player, piece){
 
 function gameHasEnded(){
     //game is over
+    var winner,loser;
     if(!closed){
         //one player has 0
-        if(players[0].hand.size == 0){console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);}
-        else if(players[1].hand.size == 0){console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);}
+        if(players[0].hand.size == 0){
+            console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);
+            winner = 0; loser = 1;
+        }
+        else if(players[1].hand.size == 0){
+            console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);
+            winner = 1; loser = 0;
+        }
     }else{
         //game closed find one with lowest points
         var points = new Array(0,0);
         for(let i = 0; i < 2; i++)
             for(let [k,v] of players[0].getHand())
                 points[i] += v.getPoints();
-        if(points[0] < points[1]){console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);}
-        else if(points[0] > points[1]){console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);}
-        else{console.log("DRAW"); gameResults('',true);}       
+        if(points[0] < points[1]){
+            console.log("Player-"+players[0].player+" WON!"); gameResults("Player-"+players[0].player,false);
+            winner = 0; loser = 1;
+        }
+        else if(points[0] > points[1]){
+            console.log("Player-"+players[1].player+" WON!"); gameResults("Player-"+players[1].player,false);
+            winner = 1; loser = 0;
+        }
+        else{console.log("DRAW"); gameResults('',true); winner = loser = 0;}       
     }
+    updateLeaderBoard(winner,loser);
     quitGame.apply();
 }
 
@@ -150,11 +164,12 @@ async function makePlay(board){
     //has to go to stack
     console.log("Was there a match? "+max);
     if(max == -1){
-        infoStack(true);
-        console.log('No pieces => Stack');
+        infoStack(true); //await sleep(1000);
+        console.log('No pieces PLayer => Stack');
         var empty = players[1].takeFromStack(players[2]);
-        if(empty) return;
-        makePlay(players[3]); return;
+        //await sleep(1000);
+        if(empty) players[0].findBestPlay(players[3],players[2]);
+        makePlay(players[3]);
     }
     for(let [k,v] of players[1].hand){
         var span = document.getElementById(k);
@@ -185,15 +200,6 @@ function pieceToPlay(span,piece){
             //will disable hover for player pieces and increase scale for current
             for(let [k,v] of players[1].hand)document.getElementById(k).setAttribute('class','DM-normal');
             span.style.filter = "invert(100%)";span.style.transform = "scale(1.2)";
-            
-            var move = verify[0] == 'nomatch'? verify[1] : verify[0];
-
-            var to_top,to_rotate,to_translate,rotate,translate,options_gp;
-            [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[0].logicPlacement(move,piece,true);
-
-            //console.log([to_top,to_rotate,to_translate,rotate,translate]);
-            console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
-            
 
             var str = "<span id=\"dont-place\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\">Don't Place</button></span>"
             generateHtml(document.getElementById('Player-Stack'),str)
@@ -209,18 +215,60 @@ function pieceToPlay(span,piece){
                         document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
                         players[3].getDominos().splice(i,1);
                     }
-                    if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
+                    else if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')){
                         document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
                         players[3].getDominos().splice(i,1);
                     }
                 }
-                var span = document.getElementById(origin); span.style.filter = "invert(0%)"; span.style.transform = "scale(1)";
-                for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'initial';
+                for(let [k,v] of players[1].hand){
+                    var dpc = document.getElementById(k);
+                    dpc.style.filter = 'invert(0%)';
+                    dpc.style.transform = 'scale(1)';
+                    dpc.style.pointerEvents = 'initial';
+                    dpc.style.transform = "scale(1)";
+                }
+                makePlay(players[3]);
             });
-            if(Array.isArray(rotate)){
-                foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
-                foo(piece,2,false,true,to_translate,rotate[1],translate[1]);
-            }else{foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);}
+            
+            var s, t, move;
+            var to_top,to_rotate,to_translate,rotate,translate,options_gp;
+            if(verify[1] != 'nomatch' && verify[0] != 'nomatch'){
+                s = verify[0].split('-'); s = s[0]+'-'+s[1];
+                t = verify[1].split('-'); t = t[0]+'-'+t[1];
+                if(s == t){
+                    console.log("Both verify"); move = verify[0];
+                    [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[1].logicPlacement(move,piece,true);
+                    if(Array.isArray(rotate)){
+                        foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
+                        foo(piece,2,false,true,to_translate,rotate[1],translate[1]);
+                    }else{foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);}
+                    console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
+                }
+                else{
+                    move = verify[0];
+                    [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[1].logicPlacement(move,piece,true);
+                    foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);
+                    console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
+
+                    move = verify[1];
+                    [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[1].logicPlacement(move,piece,true);
+                    foo(piece,2,to_top,to_rotate,to_translate,rotate,translate);
+                    console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
+
+                }
+            }else{
+                move = verify[0] == 'nomatch'? verify[1] : verify[0];
+                [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[0].logicPlacement(move,piece,true);
+                if(Array.isArray(rotate)){
+                    foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
+                    foo(piece,2,false,true,to_translate,rotate[1],translate[1]);
+                }else{foo(piece,1,to_top,to_rotate,to_translate,rotate,translate);} 
+                console.log("pieceToPlay: "+piece+": ["+dom.getRec1()+","+dom.getRec2()+"]\nMade match-->{"+move+"}\nRotation:"+rotate+"\nGoing to top="+to_top);
+
+
+            }
+            //console.log([to_top,to_rotate,to_translate,rotate,translate]);
+            
         }
     }
 }
@@ -271,7 +319,7 @@ function place(piece,poss){
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-2'));
                     players[3].getDominos().splice(i,1);
                 }
-                if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')) players[3].getDominos()[i].img_id = origin;
+                else if(players[3].getDominos()[i].img_id == (origin+'-Possible-1')) players[3].getDominos()[i].img_id = origin;
             }
         }else{//console.log("entered pos 2");
             for(let i = 0; i < players[3].getDominos().length; i++){
@@ -280,14 +328,14 @@ function place(piece,poss){
                     document.getElementById('Game-Board').removeChild(document.getElementById(origin+'-Possible-1'));
                     players[3].getDominos().splice(i,1);
                 }
-                if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')) players[3].getDominos()[i].img_id = origin;
+                else if(players[3].getDominos()[i].img_id == (origin+'-Possible-2')) players[3].getDominos()[i].img_id = origin;
             }
         }
         document.getElementById(piece).setAttribute('id',origin);
         players[1].hand.delete(origin);
         for(let [k,v] of players[1].hand){var span = document.getElementById(k); span.removeEventListener('click',pieceToPlay(span,k));}
-        players[0].findBestPlay(players[3],players[2]);
         turn(true);
+        players[0].findBestPlay(players[3],players[2]);
     }
 }
 
@@ -307,8 +355,7 @@ function turn(my_turn){
     document.getElementById('turn').style.zIndex = '5';
     document.getElementById('turn').style.display = 'block';
     document.getElementById('ok-turn').onclick = function(){
-        var game_p = document.getElementById('ai-page').removeChild(document.getElementById('turn'));
-        
+        var game_p = document.getElementById('ai-page').removeChild(document.getElementById('turn'));        
     }
 
 }
@@ -346,7 +393,9 @@ function infoStack(is_me){
     document.getElementById('taking-from-stack').style.zIndex = '5';
     document.getElementById('taking-from-stack').style.display = 'block';
     document.getElementById('ok-taking').onclick = function(){
-        document.getElementById('ai-page').removeChild(document.getElementById('taking-from-stack'));
+        var a = document.getElementById('ai-page');
+        var st = document.getElementById('taking-from-stack');
+        a.removeChild(st);
     }
 }
 
@@ -368,4 +417,17 @@ function gameResults(winner,draw){
     document.getElementById('ok-results').onclick = function(){
         document.getElementById('ai-page').removeChild(document.getElementById('game-results'));
     }
+}
+
+function updateLeaderBoard(winner,loser){
+    var date = new Date().toDateString();;
+    winner = 'Player-'+players[winner].player;
+    loser = 'PLayer-'+players[loser].player;
+    var s = (winner == loser)? "Game was draw" : ((winner == 'Player-Current')? 
+                "<b style=\"color: green;\">"+winner+"</b> won match" : "<b style=\"color: red;\">"+winner+"</b> won match");
+    
+
+    var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0]
+    var str = "<p><br><span class=\"leaders\"><b>Player-"+players[0].player+"  VS  Player-"+players[1].player+"  "+date+"  Result: "+s+"</b></span></p>"
+    generateHtml(leader_page,str);
 }

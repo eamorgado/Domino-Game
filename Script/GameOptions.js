@@ -170,10 +170,10 @@ async function newGame(){
         var game_page = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
     
     //create and append the loader circle
-        var loader = document.createElement('div');
+        /*var loader = document.createElement('div');
         loader.setAttribute('class', 'loader');
         loader.setAttribute('id', 'loader');
-        game_page.appendChild(loader);
+        game_page.appendChild(loader);*/
 
             //givePieces(game_page, pieces, true, 5,5);
             //await sleep(2000);
@@ -212,8 +212,8 @@ function quitGame(){
     document.getElementById("game-in-progress").style.display = "none";
     document.getElementById("inst-on-game").style.display = 'none';
     parent = document.getElementById('ai-page').getElementsByClassName('overlay-content')[0];
-    content = document.getElementById("loader");
-    parent.removeChild(content);
+    /*content = document.getElementById("loader");
+    parent.removeChild(content);*/
         
 
 }
