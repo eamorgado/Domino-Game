@@ -1,0 +1,68 @@
+/*------------------------------------------------------------------------------
+Css file to handle the styling of the gaming options, the human vs ai and the 
+    human vs human, those are images that will be treated as buttons, each
+    containing an animation
+------------------------------------------------------------------------------*/
+
+
+/*------------------------------------------------------------------------------
+                                Sided images
+------------------------------------------------------------------------------*/
+.row{
+    margin-top: 8%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 5vh;
+    display: flex;
+    padding-bottom: 10vh;
+}
+.column {
+    flex: 33.33%;
+    padding: 0;
+    z-index: 1;
+}
+
+  
+  /* Clear floats after image containers */
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+
+/*------------------------------------------------------------------------------
+                            Domino Center image
+------------------------------------------------------------------------------*/  
+.domino-center{
+    width: 70%;
+    height: 60%;
+    z-index: -1;
+}  
+
+
+/*------------------------------------------------------------------------------
+                            Game options hover
+------------------------------------------------------------------------------*/
+#h-a-hover, #h-h-hover{
+    display: none;
+}
+#human-ai:hover span[id="h-a-normal"], #human-human:hover span[id="h-h-normal"]{
+    display: none;
+}
+
+#human-ai:hover span[id="h-a-hover"], #human-human:hover span[id="h-h-hover"]{
+    display: block;
+    animation: zoom 1.5s;
+    animation-iteration-count: infinite; 
+}
+
+span[id="h-a-normal"] img, span[id="h-h-normal"] img, span[id="h-a-hover"] img, span[id="h-h-hover"] img{
+    margin-top: 100px;
+    width: 100%;
+    border: 2px hidden;
+    border-radius: 25px;
+}
+
+/*------------------------------------------------------------------------------
+------------------------------------------------------------------------------*/

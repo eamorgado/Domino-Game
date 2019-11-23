@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!--------------------------------------------------------------------->
+            <link rel="icon" href="Assets/favicon.ico" type="image/icon">
+            
+            <link rel="stylesheet" href="CSS/main.css" type="text/css">
+            <link rel="stylesheet" href="CSS/overlay.css" type="text/css">
+            <link rel="stylesheet" href="CSS/login.css" type="text/css">
+            <link rel="stylesheet" href="CSS/versus.css" type="text/css">
+            <link rel="stylesheet" href="CSS/game.css" type="text/css">
+            <link rel="stylesheet" href="CSS/Miscellaneous/animations.css" type="text/css">
+            <link rel="stylesheet" href="CSS/Miscellaneous/medias.css">
+        <!--------------------------------------------------------------------->
+
+        <!---------------------------Google Font:Roboto------------------------>
+            <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:700' rel='stylesheet' type='text/css'>
+            <link href='https://fonts.googleapis.com/css?family=Roboto:100' rel='stylesheet' type='text/css'>
+        <!--------------------------------------------------------------------->
+
+        <title>DomiWeb</title>
+    </head>
+    <body>
+        <!-------------------------------Main --------------------------------->
+            <div class="page-container">
+                <div class="content-wrap">
+                    <!---------------------------NAV BAR----------------------->
+                        <header class="navbar" style="z-index: 1">
+                            <img src="Assets/logo2.png" alt="logo" class="logo" width="8%">
+                            <div><h1>&nbsp;&nbsp;&nbsp;&nbsp;DomiWeb</h1></div>
+                            <nav>
+                                <a><span onclick="openMenu('instruction-page');"><b>Instructions</b></span></a>
+                                <a><span onclick="openMenu('leader-page');"><b>LeaderBoard</b></span></a>
+                                <a><span onclick="showLogin();"><b>Login</b></span></a>
+                            </nav>
+                        </header>
+                        <div id="game-in-progress"><p>Game in Progress</p></div>
+                    <div class="row">
+                        <div class="column" id="human-human">
+                            <span id="h-h-normal"><img src="Assets/human_human.png" alt="Human vs Computer"></span>
+                            <span id="h-h-hover" onclick="openMenu('human-page');"><img id="human-ai-img" src="Assets/human_human-intense.png" width="90%" alt="Human vs Computer"></span>
+                        </div>
+                        <img class="domino-center" src="Assets/background.png" alt="Background Domino">
+                        <div class="column" id="human-ai">
+                            <span id="h-a-normal"><img src="Assets/human_ai.jpg" width="90%" alt="Human vs Computer"></span>
+                            <span id="h-a-hover" onclick="openMenu('ai-page');"><img src="Assets/human_ai-intense.jpg" width="90%" alt="Human vs Computer"></span>
+                        </div>
+                    </div>
+                </div>
+                <footer id="copy"><b>up201706894  up201706082</b></footer>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------Instruction Page------------------------------------>
+            <div id="instruction-page" class="overlay" style="background-color: rgba(255, 255, 255, 0.836);">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('instruction-page')">&times;</a>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" class="ov-collapsible"><h1><b>Pieces</b></h1></button>
+                        <div class="ov-content-collapsible">
+                            <p>Each piece is rectangular with 2 rectangular parts;</p>
+                            <p>Each rectangular part has dotted values ranging from 0 to 6;</p>
+                            <p>
+                                There are no two equal pieces, the piece <sub style="font-size: 50px">&#127059;</sub> 
+                                is equal to <sub style="font-size: 50px">&#127071;</sub>;
+                            </p>
+                            <p>In total there are <b>28</b> pieces;</p>
+                            <p>Each piece has a certain amount of points (the sum of its dots);</p>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" class="ov-collapsible"><h1><b>Starting Conditions</b></h1></button>
+                        <div class="ov-content-collapsible">
+                            <p>
+                                At the start the pieces are shuffled and distributed in 3 groups:<br>
+                                Player</b> hand;<br><b>Opponent</b> hand;<br><b>Stack</b>;
+                            </p>
+                            <p>
+                                The player that has the <sub style="font-size: 50px">&#127073;</sub> piece (highest value piece)
+                                starts the game, placing it in the center of the game board;
+                            </p>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" class="ov-collapsible"><h1><b>Playing</b></h1></button>
+                        <div class="ov-content-collapsible">
+                            <p>
+                                During the game each player will take turns playing;
+                            </p>
+                            <p>
+                                Played pieces form a game line, new pieces must be placed in either ends of the line;
+                            </p>
+                            <p>
+                                To place a piece next to another the touching rectangles must have the same amount of dots; 
+                            </p>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" class="ov-collapsible"><h1><b>Stack</b></h1></button>
+                        <div class="ov-content-collapsible">
+                            <p>
+                                If either one of the players doesn't have any playable piece, he must use the <b>stack</b>.
+                                The player will keep on taking pieces until it is possible for him to play;
+                            </p>
+                            <p>
+                                The current player can and must skip his turn <b>if and only if</b> the stack is empty;
+                            </p>
+                        </div>
+                    </div>
+                </div><br>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" class="ov-collapsible"><h1><b>Finishing Conditions</b></h1></button>
+                        <div class="ov-content-collapsible">
+                            <p>
+                                The game ends when:
+                                <br>A player <b>has no more pieces</b> (he wins);
+                                <br>The game is <b>closed</b> and no player can play;
+                            </p>
+                            <p>
+                                The game is <b>closed</b> when both the game extremities have the same value and 7 other pieces have that value; 
+                            </p>
+                            <p>
+                                The winner is the player with the <b>least</b> amount of points in his hand (the points are the sum of each value in the 2 rectangles in one piece);
+                            </p>
+                        </div>
+                    </div>
+                </div><br>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------LeaderBoard Page------------------------------------>
+            <div id="leader-page" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('leader-page')">&times;</a>
+                <div class="overlay-content">
+                This is the LeaderBoard
+                </div>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------Human vs AI----------------------------------------->
+            <div id="ai-page" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('ai-page')">&times;</a>
+                <div class="overlay-content">
+                    <div>
+                        <button type="button" id="new-game" onclick="newGame();">New Game</button>
+                        <button type="button" id="quit-game" onclick="quitGame();">Quit Game</button>
+                    </div>
+                    <span id="inst-on-game" onclick="openMenu('instruction-page','4');"><img src="Assets/instruct.png" alt="Game Instructions" width="100%"></span>
+                </div>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-----------------Human vs Human-------------------------------------->
+            <div id="human-page" class="overlay">
+                <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('human-page')">&times;</a>
+                <div class="overlay-instructions">
+                    <span style="text-align:center; width: 50%; color:whitesmoke; border:2px solid #444; border-radius:25%; background-color:#444;">Page Under Construction</span>
+                </div>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-------------------------------Login--------------------------------->        
+            <div id="login-form" class="modal">
+                <span onclick="hideLogin();" 
+                class="close-login" title="Close Form">&times;</span>
+                <!-- Modal Content -->
+                <form class="login-modal-content animate" action="#">
+                    <div class="login-imgcontainer">
+                        <img src="Assets/avatar.png" alt="Avatar" class="avatar">
+                    </div>
+
+                    <div class="login-container">
+                        <label for="uname"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="uname" required>
+
+                        <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                        <button class= "submit" type="submit">Login</button>
+                        <label>
+                            <input type="checkbox" checked="checked" name="remember">Remember me
+                        </label>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="hideLogin();" class="login-cancelbtn">Cancel</button>
+                        <span class="psw">Don't have an account? <a href="#" onclick="showRegister();">Sign up</a></span>
+                        &nbsp;&nbsp;
+                        <span class="psw"><a href="#">Forgot password?</a></span>
+                    </div>
+                </form>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!-------------------------------SingUp-------------------------------->
+            <div id="singup-form" class="modal">
+                <span onclick="hideRegister();" 
+                class="close-login" title="Close Form">&times;</span>
+                <!-- Modal Content -->
+                <form class="login-modal-content animate" action="#">
+                    <div class="login-imgcontainer">
+                        <img src="Assets/avatar.png" alt="Avatar" class="avatar">
+                    </div>
+
+                    <div class="login-container">
+                        <label for="uname"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="uname" required>
+                        
+                        <label for="emai"><b>Email</b></label>
+                        <input type="email" placeholder="Enter Email Address" name="emai" required>
+
+                        <label for="psw"><b>Password</b></label>
+                        <input type="password" placeholder="Enter Password" name="psw" required>
+
+                        <button class= "submit" type="submit">Sing Up</button>
+                        <label>
+                            <input type="checkbox" checked="checked" name="remember">Remember me
+                        </label>
+                    </div>
+
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="hideRegister()" class="login-cancelbtn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        <!--------------------------------------------------------------------->
+        
+
+        <!------------Player taking from stack--------------------------------->
+            <div id="taking-from-stack" class="modal">
+                <!-- Modal Content -->
+                <form class="login-modal-content animate" action="#">
+                    <div class="login-container"><h2>Adversary is taking pieces from stack</h2></div>
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button type="button" onclick="hideTakeStack();" class="submit">Ok</button>
+                    </div>
+                </form>
+            </div>
+        <!--------------------------------------------------------------------->
+
+
+        <!---------------------------Stack Empty Pass-------------------------->
+            <div id="empty-stack" class="modal">
+                <!-- Modal Content -->
+                <form class="login-modal-content animate" action="#">
+                    <div class="login-container"><h2>Stack is Empty!</h2></div>
+                    <div class="login-container"><h2>You must pass your turn</h2></div>
+                    <div class="login-container" style="background-color:#f1f1f1">
+                        <button id="pass" type="button" class="submit">Pass</button>
+                    </div>
+                </form>
+            </div>
+        <!--------------------------------------------------------------------->
+
+        
+        <!---------------------------Scripts----------------------------------->
+        <script src="Script/Menus/NavMenus.js"></script><!--"redirects"-->
+        <script src="Script/Menus/collapsible.js"></script>
+        <script src="Script/GameOptions.js"></script>
+        <script src="Script/Domino.js"></script>
+        <script src="Script/Player.js"></script>
+        <script src="Script/Game.js"></script>
+        <script src="Script/Board.js"></script>
+    </body>
+</html>
