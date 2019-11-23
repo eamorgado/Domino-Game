@@ -1,5 +1,7 @@
 function getRandomElements(source, n){
-    //function to get n random elements from array
+    /**
+     * This function will remove n random elements from source array
+     */
     var resulting_array = new Array(n);
         let len = source.length;
         let taken = new Array(len);
@@ -13,43 +15,57 @@ function getRandomElements(source, n){
     return resulting_array;
 }
 
+
 function filterArray(source, to_remove){
-    //function to remove all elements in to_remove that occur in source
+    /**
+     * This function will remove all the elements in to_remove that occur in source
+     */
     var tmp_source = source.filter(function(el) {
         return !to_remove.includes(el);
     });
     return tmp_source;
 }
 
-var players, closed;
+
+var players, closed; //global variables
+
 async function startGame(pieces,player1, player2){
+    /**
+     * This function will start the game, initialize the players, choose which player
+     *      to play first give turns
+     */
     closed = false;
     //start players + stack
         players = new Array(3);
             [players[0],players[1],players[2],players[3]] = [new Player(player1),new Player(player2),new Player('Stack'),new Board('Game-Board')];
-            
+    
+
     var pieces_to_give = Array.from(pieces);
 
-    //get random elements for player 1
+    //get random elements for player 1 adv
         var pieces_p0 = getRandomElements(pieces_to_give,7);
         pieces_to_give = Array.from(filterArray(pieces_to_give,pieces_p0));
         
-    //get random elements for player 2
+    //get random elements for player 2 current
         var pieces_p1 = getRandomElements(pieces_to_give,7);
         pieces_to_give = Array.from(filterArray(pieces_to_give,pieces_p1));
     
-    var to_give = new Array(pieces_p0,pieces_p1,pieces_to_give);
-    for(let i = 0; i < 3; i++)
-        for(let piece of to_give[i])
-            players[i].addPiece(new Array(piece),false,5,5,
-                ((i == 0 || i == 2)? true:false),'5%',
-                ((i == 0 || i == 2)? false:true),
-                ((i == 2)? true:false));
+    //adds all the pieces to the respective player
+        var to_give = new Array(pieces_p0,pieces_p1,pieces_to_give);
+        for(let i = 0; i < 3; i++)
+            for(let piece of to_give[i])
+                players[i].addPiece(new Array(piece),false,5,5,
+                    ((i == 0 || i == 2)? true:false),'5%',
+                    ((i == 0 || i == 2)? false:true),
+                    ((i == 2)? true:false));
 
+    //display available pieces in stack
     var stack = document.getElementById('Player-Stack');
     //players[2].getHand().set('array',pieces_to_give);
     stack.textContent = 'Stack Pieces: '+ players[2].getHand().size;
     
+    //Finds the max piece in both players the one with the highest will start
+    //if they are equal in points then randomize
     var max1 = players[0].findMaxPiece();
     var max2 = players[1].findMaxPiece();
     var id = ((max1[0] > max2[0])? max1[1] : ((max1[0] == max2[0])? 
@@ -59,10 +75,18 @@ async function startGame(pieces,player1, player2){
     gameLoop(document.getElementById(id).parentElement.id,id)        
 }
 
+
 function isGameOver(){
-    //check points player 1
-    if(players[0].getHand().size == 0) return true;
+    /**
+     * This function will check if game has ended
+     * Game ends if either player has no more pieces
+     *  or if game is closed, game is closed, if stack is empty, and extremes have same values
+     *  and that value repeats itself 7 times in board, in which case, winner is player
+     *  with less points in hand
+     */
+    //check points player 1    
     if(players[1].getHand().size == 0) return true;
+    if(players[0].getHand().size == 0) return true;
     var dom = players[3].getDominos();
     if(dom.length == 0) return false;
 
@@ -88,15 +112,16 @@ function isGameOver(){
     return closed;
 }
 
-async function gameLoop(player, piece){
-    //piece is the img id
-    //player first move
-    for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none';
-     await sleep(1000);
+
+async function gameLoop(player, piece){//piece is the img id
+    //Disable clicks for player
+        for(let [k,v] of players[1].hand) document.getElementById(k).style.pointerEvents = 'none';
+    await sleep(1000);
+
+    //Starting player is AI
     if(player == 'Player-AI'){
         players[0].playPiece(piece,players[3],0);
         turn(true);
-        //console.log("AI");        
         player = 'Player-Current';
     }else if(player == 'Player-Current'){
         //turn(true);
@@ -122,6 +147,7 @@ async function gameLoop(player, piece){
         makePlay(players[3]);  
     }
 }
+
 
 function gameHasEnded(){
     //game is over
@@ -156,25 +182,38 @@ function gameHasEnded(){
     quitGame.apply();
 }
 
+
 async function makePlay(board){
     //player will click on pice, launching pieceToPlay
-    if(isGameOver()){gameHasEnded(); return;}
-    var max,move,pice,is_top,opt;
-    [max,move,piece,is_top,opt] = players[1].findPlayerMatch(board);    
+    //Game is over
+        if(isGameOver()){gameHasEnded(); return;}
+    
+    //Checks to see if there is any match
+        var max,move,pice,is_top,opt;
+        [max,move,piece,is_top,opt] = players[1].findPlayerMatch(board);    
+        console.log("Was there a match? "+max);
     //has to go to stack
-    console.log("Was there a match? "+max);
     if(max == -1){
         infoStack(true); //await sleep(1000);
-        console.log('No pieces PLayer => Stack');
+        console.log('No pieces Player => Stack');
         var empty = players[1].takeFromStack(players[2]);
         //await sleep(1000);
-        if(empty) players[0].findBestPlay(players[3],players[2]);
+        //stack is empty
+        if(empty){
+            //check if game is over
+            if(isGameOver()){gameHasEnded(); return;}
+            //game isn't over => adv play
+            players[0].findBestPlay(players[3],players[2]);
+        }
         makePlay(players[3]);
     }
-    for(let [k,v] of players[1].hand){
-        var span = document.getElementById(k);
-        span.setAttribute('class','DM-normal');  
-        span.addEventListener("onclick",pieceToPlay(span,k));
+    else{
+        //Has pieces to play, listen to all
+        for(let [k,v] of players[1].hand){
+            var span = document.getElementById(k);
+            span.setAttribute('class','DM-normal');  
+            span.addEventListener("onclick",pieceToPlay(span,k));
+        }
     }
 }
 
@@ -233,10 +272,13 @@ function pieceToPlay(span,piece){
             var s, t, move;
             var to_top,to_rotate,to_translate,rotate,translate,options_gp;
             if(verify[1] != 'nomatch' && verify[0] != 'nomatch'){
-                s = verify[0].split('-'); s = s[0]+'-'+s[1];
-                t = verify[1].split('-'); t = t[0]+'-'+t[1];
-                if(s == t){
-                    console.log("Both verify"); move = verify[0];
+                console.log("pieceToPlay: test matches "+verify[0]+" "+verify[1]);
+                
+                var ts = verify[0].split('-'); s = ts[0]+'-'+ts[1];
+                var tt = verify[1].split('-'); t = tt[0]+'-'+tt[1];
+                if(s == t && ts[2] == tt[2] && tt[2] == 'both'){
+
+                    console.log("Both verify "+verify[0]+" "+verify[1]); move = verify[0];
                     [to_top,to_rotate,to_translate,rotate,translate,options_gp] = players[1].logicPlacement(move,piece,true);
                     if(Array.isArray(rotate)){
                         foo(piece,1,true,true,to_translate,rotate[0],translate[0]);
@@ -378,6 +420,7 @@ function noMatch(piece){
     }
 }
 
+
 function infoStack(is_me){
     var s = (is_me != 'undefined')? 'You have no matching pieces<br>Taking from stack' : 'Adversary is taking pieces from stack';
     var str = 
@@ -399,6 +442,7 @@ function infoStack(is_me){
     }
 }
 
+
 function gameResults(winner,draw){
     var s = (winner == "Player-"+players[1].player)? 'You <b style=\"color: green;\">WON</b>' : 'You <b style=\"color: red;\">lost :(</b>';
     var s = draw? 'Game was a <b>draw</b>' : s;
@@ -418,6 +462,7 @@ function gameResults(winner,draw){
         document.getElementById('ai-page').removeChild(document.getElementById('game-results'));
     }
 }
+
 
 function updateLeaderBoard(winner,loser){
     var date = new Date().toDateString();;

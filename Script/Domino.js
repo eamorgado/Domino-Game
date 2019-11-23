@@ -28,28 +28,49 @@ function checkFlipped(piece){
                             Domino Class
 ------------------------------------------------------------------------------*/
 class Domino{
-    //Constructor for blank domino piece
+    /**
+     * Domino Class:
+     *  > rec1 -- saves value of first dotted square in piece
+     *  > rec2 -- saves value of second dotted square in piece
+     *  > points -- saves the sum of the 2 squares, the domino piece's points
+     *  > position -- saves position of domino piece on board (vertical/horizontal)
+     *  > img_id -- saves DOM id for domino piece's image tag
+     *  > is_double -- saves if piece is double, meaning both squares have equal dots
+     *  > owner -- saves owner of piece (Adv,Curr,Stack,Board) [obsolete=>to_remove]
+     *  > flipped -- saves if piece is flipped or not [obsolete=>to_remove]
+     * 
+     *  - newOwner(owner) -- changes piece owner to given [obsolete=>to_remove]
+     *  - translatePieceX(translate) -- performs css translateX to <img id=img_id> tag [obsolete=>to_remove]
+     *  - rotatePiece(side, translate) -- toggles piece position between vertical and horizontal
+     *  - copyDomino() -- returns new copy domino
+     *  - showPiece() [obsolete=>to_remove]
+     *  - equal(domino) [obsolete=>to_remove]
+     * 
+     *  - match(domino,relative_to) -- tests match for piece against domino on board
+     *          returns string with match/nomatch and types of match
+     *  
+     */
     constructor(rec1,rec2,flipped,position,owner,img_id){
-        this.position = position;
-        this.rec1 = rec1; this.rec2 = rec2;
+        this.rec1 = rec1; this.rec2 = rec2;    
         this.points = rec1 + rec2;
-        this.owner = owner;
-        this.flipped = flipped;
+        this.position = position;
         this.img_id = img_id;
         this.is_double = this.rec1 == this.rec2;
+        this.owner = owner;
+        this.flipped = flipped;
     }
+
     getId(){return this.img_id;}
     isDouble(){return this.is_double;}
     getRec1(){return this.rec1;}
-    getRec2(){return this.rec2;}
+    getRec2(){return this.rec2;}    
+    getPoints(){return this.points;}
     tellPosition(){ return this.position;}
     tellOwner(){return this.owner;}
-    //tellImgID(){return this.img_id;}
     isFlipped(){return this.flipped;}
-    
-    getPoints(){return this.points;}
 
     newOwner(owner){this.owner = owner;}
+
     translatePieceX(translate){var origin;
         var span = document.getElementById(this.img_id);
         if(translate == 'top_part')
@@ -61,18 +82,21 @@ class Domino{
         span.style.oTransform = "translateX("+translate+")";
         span.style.transform = "translateX("+translate+")";
     }
+
     rotatePiece(side,translate){
-        //var img = span.firstElementChild;
         this.position = (this.position == 'vertical')? 'horizontal' : 'vertical';
     }
+
     copyDomino(){
         var d = this.isDouble();
         var dom = new Domino(this.rec1,this.rec2,this.flipped,this.position,this.owner,this.img_id);
         dom.is_double = d;
         return dom;
     }
+
     showPiece(){return this.position;}
     equal(domino){return this.getPoints() == domino.getPoints();}
+
     match(domino,relative_to,size){
         //console.log("Domino.match: "+domino.img_id);        
         var span = document.getElementById(domino.img_id);
@@ -141,8 +165,5 @@ class Domino{
         }return 'nomatch';
     }
 }
-
-
-
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/
