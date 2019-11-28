@@ -2,6 +2,7 @@ const BASE_URL = "http://twserver.alunos.dcc.fc.up.pt:8008/";
 var GAME_ID
 var flag;
 var username, password;
+var player, adv;
 
 function dataPost(url, data = {}) {
     return fetch(url, {
@@ -46,7 +47,6 @@ function register(username, password) {
     dataPost(url, data).then(data => {
         console.log(JSON.stringify(data));
         if (data.error != undefined)
-        //there is an error
             messageUser('starter', data.error);
         else {
             document.getElementById("auth").textContent = username;
@@ -58,12 +58,38 @@ function register(username, password) {
 }
 
 
-function update(username, gameid) {
-    const url = BASE_URL + "update?nick=" + username + "&game=" + gameid;
-    var source = new EventSource(url);
-    source.onmessage = function(e) {
+function update(user, gameid) {
+    const url = BASE_URL + "update?nick=" + user + "&game=" + gameid;
+    console.log(url);
+    var evtSource = new EventSource(url);
+    evtSource.onmessage = function(e) {
         console.log("update function answer: " + JSON.stringify(e.data));
         var data = JSON.parse(e.data);
+        console.log(data);
+        //Update stack-------
+        var stack = document.getElementById('Player-Stack');
+        stack.textContent = 'Stack Pieces: ' + data.board['stock'];
+        //Update adv------
+        var users = data.board.count;
+
+        var name = '';
+        for (var user in users)
+            if (user != username) { name = user; break; }
+
+        adv.player = name;
+        var ad = document.getElementById('Player-Adv');
+        if (ad)
+            ad.setAttribute('id', 'PLayer-' + name);
+
+        while (ad.firstElementChild)
+            ad.removeChild(ad.firstElementChild);
+
+        var tmp = new Array();
+        for (let i = 0; i < data.board.count[name]; i++)
+            tmp.push(pieces[i]);
+        appendBlanck(ad, tmp, 5, 5, '5%');
+
+
         if (data["turn"] != undefined) {
             messageUser('starter', 'It is ' + data['turn'] + ' turn');
         }
@@ -76,7 +102,7 @@ function update(username, gameid) {
             var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0];
             var str = "<p><br><span class=\"leaders\"><b>" + username + "  VS  " + winner + "  " + date + "  Result: " + s + "</b></span></p>";
             generateHtml(leader_page, str);
-            source.close();
+            evtSource.close();
         }
-    }
+    };
 }

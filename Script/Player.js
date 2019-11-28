@@ -33,8 +33,6 @@ class Player {
         };
         givePieces(b, new Array(id), false, 1, 1, false, '5%', false, before, side);
     }
-
-
     findPlayerMatch(board, check) {
         /**
          * This function checks if player has at least one piece that makes match
@@ -67,8 +65,6 @@ class Player {
         }
         return [max, move, piece, is_top, options];
     }
-
-
     logicPlacement(move, piece, is_player) {
         /**
          * This function handles all the logic to place the pieces, where and how (rotation)
@@ -173,8 +169,6 @@ class Player {
 
         return [to_top, to_rotate, to_translate, rotate_side, translate, options_gp];
     }
-
-
     findBestPlay(board, stack) {
         /**
          * This function finds the best piece to play for the Ai
@@ -242,8 +236,6 @@ class Player {
         makePlay(players[3]);
         return;
     }
-
-
     takeFromStack(stack) {
         /**
          * This function will allow adversary or player to take pieces from stack
@@ -287,8 +279,6 @@ class Player {
         //Stack was not empty so return false
         return false;
     }
-
-
     addPiece(pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover, is_stack) {
         /**
          * This function will append the pieces in the array to player hand

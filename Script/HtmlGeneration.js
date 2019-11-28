@@ -13,6 +13,29 @@ var pieces = new Array("DM-0-0", "DM-0-1", "DM-0-2", "DM-0-3", "DM-0-4", "DM-0-5
     "DM-5-5", "DM-5-6",
     "DM-6-6");
 
+
+function addBlank(i, left, right, width) {
+    var path = 'Assets/DominoPieces/';
+    var img = document.createElement('img');
+    img.src = path + 'DM-Flip.png';
+    img.style.width = '5%';
+    img.style.height = '5%';
+    //var img = document.createElement('div');
+    img.setAttribute('class', 'DM-flipped');
+    img.setAttribute('id', 'DM-Flip-' + i);
+    img.style.display = 'fixed';
+    img.style.marginLeft = left + 'px';
+    img.style.marginRight = right + 'px';
+    img.style.transform = 'rotate(0deg)';
+    return img;
+}
+
+function appendBlanck(receiver, pieces_array, left, right, width) {
+    var i = 0;
+    for (let p of pieces_array)
+        receiver.appendChild(addBlank(i++, left, right, width));
+}
+
 function createPiece(id, add_onclick, left, right, is_flipped, width, hover, side) {
     var path = 'Assets/DominoPieces/';
     var img = document.createElement('img');
