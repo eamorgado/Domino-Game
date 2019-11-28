@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------*/
-div.overlay[id="ai-page"], div[id="human-page"].overlay{
+
+div.overlay[id="ai-page"],
+div[id="human-page"].overlay {
     background-color: rgb(216, 169, 27);
     background-color: rgba(216, 169, 27, 0.877);
-
-} 
-
+}
 
 .loader {
     position: absolute;
@@ -15,36 +15,52 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     top: 10vw;
     left: 10vw;
     display: inline-block;
-    border: 16px solid black; /* Light grey */
-    border-top: 16px solid #F9C426; /* Blue */
+    border: 16px solid black;
+    /* Light grey */
+    border-top: 16px solid #F9C426;
+    /* Blue */
     border-radius: 50%;
     width: 100px;
     height: 100px;
     animation: spin 3.5s linear infinite;
 }
 
-.DM-Normal{position: fixed;}
-.DM-flipped:hover , .DM-displayed:hover{
+.DM-Normal {
+    position: fixed;
+}
+
+.DM-flipped:hover,
+.DM-displayed:hover {
     animation: shake 2.5s;
-    animation-iteration-count: infinite; 
+    animation-iteration-count: infinite;
     cursor: pointer;
 }
 
-#inst-on-game{
+#inst-on-game-ai,
+#inst-on-game-players {
     position: absolute;
     display: none;
     width: 5vw;
     top: 5%;
     left: 25%;
 }
-#inst-on-game:hover{
+
+#inst-on-game:hover,
+#inst-on-game-players:hover {
     filter: invert(50%);
     transform: scale(1.5);
 }
+
+
 /*------------------------------------------------------------------------------
                     New game buttons quit game buttons
 ------------------------------------------------------------------------------*/
-#new-game, #quit-game{
+
+#new-game-ai,
+#new-game-players,
+#quit-game-ai,
+#quit-game-players,
+#connect-game {
     padding: 15px 20px;
     margin: 8px 0;
     border: 3px hidden;
@@ -54,49 +70,58 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     font-size: 40px;
 }
 
-
-#new-game{
+#new-game-ai,
+#new-game-players {
     color: whitesmoke;
     background-color: #444;
     display: inline-block;
 }
 
+#connect-game {
+    color: #F9C426;
+    background-color: black;
+    display: inline-block;
+}
 
-#quit-game{
+#quit-game-ai,
+#quit-game-players {
     background-color: #f44336;
     position: relative;
     top: 2vw;
     left: -40%;
-    display:none
+    display: none
 }
 
-
-#quit-game:hover, #new-game:hover{
+#quit-game-ai:hover,
+#quit-game-players:hover,
+#new-game-ai:hover,
+#new-game-players:hover {
     animation: shake 4s;
-    animation-iteration-count: infinite; 
+    animation-iteration-count: infinite;
 }
 
+#quit-game-ai:hover,
+#quit-game-players:hover {
+    filter: invert(75%);
+}
 
-#quit-game:hover{filter: invert(75%);}
-
-
-.grid-container{
+.grid-container {
     display: grid;
     width: 100vw;
 }
 
-
-#Board{
+#Board {
     width: 100vw;
     height: 100%;
     padding: 10px 0 10px 0;
 }
 
-
-.player-class{
+.player-class {
     display: flex;
-    justify-content: center; /* align horizontal */
-    align-items: baseline; /* align vertical */
+    justify-content: center;
+    /* align horizontal */
+    align-items: baseline;
+    /* align vertical */
     width: 100vw;
     overflow-x: auto;
     padding: 20px 0 20px 0;
@@ -104,8 +129,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     height: 10%;
 }
 
-
-#Player-Stack{
+#Player-Stack {
     text-align: center;
     font-size: 50px;
     font-weight: 900;
@@ -116,13 +140,13 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     height: 100%;
 }
 
-
-#Game-Board{
+#Game-Board {
     position: sticky;
     top: 0;
     display: flex;
     justify-content: center;
-    align-items: center; /* align vertical */
+    align-items: center;
+    /* align vertical */
     flex-direction: row;
     overflow-x: auto;
     width: 90vw;
@@ -132,8 +156,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     margin-bottom: 2vh;
 }
 
-
-.modal-info{
+.modal-info {
     position: absolute;
     display: block;
     z-index: 1;
@@ -146,8 +169,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     background-color: rgba(68, 68, 68, 0.733);
 }
 
-
-.mi-content{
+.mi-content {
     width: 50%;
     top: -100px;
     background-color: whitesmoke;
@@ -157,7 +179,7 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     border: 2px solid #888;
 }
 
-#dont-place{
+#dont-place {
     position: absolute;
     height: 10vh;
     top: 7%;
@@ -165,37 +187,38 @@ div.overlay[id="ai-page"], div[id="human-page"].overlay{
     transform: scale(2);
 }
 
-#dont-place:hover{
+#dont-place:hover {
     filter: invert(100%);
 }
 
-#game-in-progress{
+#game-in-progress,
+#game-in-progress-ai {
     display: none;
     width: 100%;
     overflow: hidden;
-    position: relative;  
-    border-top: 3px solid whitesmoke;  
+    position: relative;
+    border-top: 3px solid whitesmoke;
     background-color: rgb(163, 127, 19);
     animation: flash 10s linear infinite;
 }
 
-
-#game-in-progress p{
+#game-in-progress p,
+#game-in-progress-ai p {
     font-size: 2.5vh;
     text-align: right;
     margin: 0;
     text-align: center;
     line-height: 30px;
     color: whitesmoke;
-    transform:translateX(50%);	
+    transform: translateX(50%);
     animation: scroll 20s linear infinite;
 }
 
-
-.leaders{
+.leaders {
     color: #444;
     font-size: 25px;
-    
 }
+
+
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/

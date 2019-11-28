@@ -1,0 +1,41 @@
+.bk-color-white {
+    background-color: #f1f1f1;
+}
+
+.bk-color-white-ov {
+    background-color: rgba(255, 255, 255, 0.836);
+}
+
+.size-50 {
+    font-size: 50px;
+}
+
+.size-25 {
+    font-size: 25px;
+}
+
+.border-2-black {
+    border: 2px solid #444;
+}
+
+.wd-50 {
+    width: 50px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.mr-10 {
+    margin-right: 10px;
+}
+
+input[name=gameid],
+input[name=group] {
+    text-align: center;
+    width: 50%;
+    padding: 5px 0 5px 0;
+    border: 2px solid #444;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
