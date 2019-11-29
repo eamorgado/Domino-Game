@@ -22,7 +22,7 @@ function addBlank(i, left, right, width, side) {
     img.style.height = '5%';
     //var img = document.createElement('div');
     img.setAttribute('class', 'DM-normal');
-    img.setAttribute('id', 'DM-Flip-' + i);
+    img.setAttribute('id', i);
     img.style.display = 'fixed';
     img.style.marginLeft = left + 'px';
     img.style.marginRight = right + 'px';

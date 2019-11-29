@@ -1,8 +1,11 @@
 const BASE_URL = "http://twserver.alunos.dcc.fc.up.pt:8008/";
-var GAME_ID
+var GAME_ID;
+var SOURCE;
+var TURN;
 var flag;
 var username, password, adv_name;
 var player, adv, players_board;
+
 
 function messageUser(id, inner_text) {
     var receiver = document.getElementById(id);
@@ -59,6 +62,13 @@ function register(username, password) {
     }).catch(console.log);
 }
 
+function updatePlayer() {
+    var pl = document.getElementById(player.getName());
+    while (pl.firstElementChild) pl.removeChild(pl.firstElementChild);
+    for (let [k, v] of player.hand)
+        givePieces(pl, new Array(k), false, 5, 5, false, '5%', true);
+}
+
 function updateAdv(count) {
     var name = 'Adv';
     for (var user in count)
@@ -73,7 +83,7 @@ function updateAdv(count) {
 }
 
 function updateStack(stack) {
-    document.getElementById('Player-Stack').textContent = 'Stack Pieces: ' + stack;
+    document.getElementById('Player-Stack').textContent = 'Stack Pieces: ' + stack + ' | Turn: ' + TURN;
 }
 
 function updateGameBoard(gameboard) {
@@ -101,33 +111,30 @@ function updateGameBoard(gameboard) {
 function update(user, gameid) {
     const url = BASE_URL + "update?nick=" + user + "&game=" + gameid;
     console.log(url);
-    var source = new EventSource(url);
-    source.onmessage = function(e) {
+    SOURCE = new EventSource(url);
+    SOURCE.onmessage = function(e) {
         console.log("update function answer: " + JSON.stringify(e.data));
         var data = JSON.parse(e.data);
         console.log(data);
-        //Update stack-------
-        if (data.board.stock)
-            updateStack(data.board['stock']);
-        //Update adv------
-        updateAdv(data.board.count);
-        if (data.board.line)
-            updateGameBoard(data.board.line);
         if (data["turn"] != undefined) {
-            if (data['turn'] == username) {
-                messageUser('starter', 'It is your turn');
-                for (let [k, v] of player.hand) {
-                    var piece = document.getElementById(k);
-                    piece.setAttribute('class', 'DM-normal');
-                    piece.addEventListener('onclick', enableUserSelection(piece, k));
-                }
-            } else {
-                messageUser('starter', 'It is ' + data['turn'] + '\'s turn');
-                for (let [k, v] of player.hand) document.getElementById(k).style.pointerEvents = 'none';
+            TURN = data['turn'];
+            //Update stack-------
+            if (data.board.stock)
+                updateStack(data.board['stock']);
+            //Update adv------
+            updateAdv(data.board.count);
+            updatePlayer();
+            if (data.board.line)
+                updateGameBoard(data.board.line);
+            for (let [k, v] of player.hand) {
+                var piece = document.getElementById(k);
+                piece.setAttribute('class', 'DM-normal');
+                piece.addEventListener('onclick', enableUserSelection(piece, k));
             }
         }
         if (data["winner"] != undefined) {
             messageUser('starter', 'Player ' + data['winner'] + ' has won');
+            cleanUp();
             GAME_ID = null;
             var date = new Date().toDateString();
             winner = data['winner'];
@@ -135,7 +142,7 @@ function update(user, gameid) {
             var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0];
             var str = "<p><br><span class=\"leaders\"><b>" + username + "  VS  " + winner + "  " + date + "  Result: " + s + "</b></span></p>";
             generateHtml(leader_page, str);
-            source.close();
+            SOURCE.close();
         }
     };
 }
@@ -159,8 +166,6 @@ function notify(user, pass, gameid, side, piece, skip) {
                     sidePicker(rec1, rec2, p);
                 } else {
                     player.hand.delete(p);
-                    var child = document.getElementById(p);
-                    document.getElementById(player.getName()).removeChild(child);
                 }
             }
         });

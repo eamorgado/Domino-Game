@@ -57,16 +57,18 @@ function appendPieces(pl, hand, is_adv) {
     }
 }
 
-
-function quitGamePlayers() {
+function cleanUp() {
     document.getElementById("quit-game-players").style.display = "none";
     document.getElementById('new-game-players').style.display = 'inline-block';
     document.getElementById('connect-opt').style.display = 'block';
     var content = document.getElementById('Board');
-
     var parent = content.parentElement;
     parent.removeChild(content);
     document.getElementById("game-in-progress").style.display = "none";
     document.getElementById("inst-on-game-players").style.display = 'none';
     parent = document.getElementById('human-page').getElementsByClassName('overlay-content')[0];
+}
+
+function quitGamePlayers() {
+    cleanUp()
 }
