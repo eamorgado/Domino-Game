@@ -127,6 +127,7 @@ function update(user, gameid) {
                 updateGameBoard(data.board.line);
             if (TURN == username) {
                 var match = checkMatch(data.board.line);
+                console.log("[User: " + username + ', Has Match: ' + match + ']\n');
                 if (match)
                     for (let [k, v] of player.hand) {
                         var piece = document.getElementById(k);
@@ -148,15 +149,13 @@ function update(user, gameid) {
         }
         if (data["winner"] != undefined) {
             messageUser('starter', 'Player ' + data['winner'] + ' has won');
-            cleanUp();
-            GAME_ID = null;
             var date = new Date().toDateString();
             winner = data['winner'];
             var s = (winner == username) ? "<b style=\"color: green;\">" + winner + "</b> won match" : "<b style=\"color: red;\">" + winner + "</b> won match";
             var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0];
             var str = "<p><br><span class=\"leaders\"><b>" + username + "  VS  " + winner + "  " + date + "  Result: " + s + "</b></span></p>";
             generateHtml(leader_page, str);
-            SOURCE.close();
+            leave();
         }
     };
 }
@@ -181,20 +180,22 @@ function notify(user, pass, gameid, side, piece, skip) {
                 if (data.side != undefined) {
                     messageUser('starter', 'Pick side');
                     sidePicker(rec1, rec2, p);
-                } else if (data.piece != undefined) {
-                    //added piece
-                    var rec1, rec2, p, [rec1, rec2, p] = extractPieceParts(data.piece);
-                    player.hand.set(p, new Domino(rec1, rec2, false, 'vertical', 'player', p));
-                } else {
-                    // notify {}
-                    player.hand.delete(p);
+                    return;
                 }
+                if (data.piece != undefined) {
+                    //added piece
+                    console.log('Piece to be added: ' + data.piece);
+                    appendPieces(player, new Array(data.piece), false);
+                    updatePlayer();
+                    return;
+                }
+                // notify {}
+                player.hand.delete(p);
             }
         });
 }
 
-function
-leave(user, pass) {
+function leave(user, pass) {
     const url = BASE_URL + 'leave';
     const input = { 'nick': user, 'pass': pass, 'game': GAME_ID };
     dataPost(url, input)
@@ -206,6 +207,7 @@ leave(user, pass) {
             } else {
                 GAME_ID = null;
                 cleanUp();
+                SOURCE.close();
             }
         });
 }

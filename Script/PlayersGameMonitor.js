@@ -39,7 +39,7 @@ function clickPossible(p_obj) {
         [rec1, rec2] = rec2 >= rec1 ? [rec2, rec1] : [rec1, rec2];
         [rec1, rec2] = [Number(rec1), Number(rec2)];
         console.log("Piece: [" + rec1 + ',' + rec2 + ']  Side ' + side);
-
+        updatePlayer();
         notify(username, password, GAME_ID, side, new Array(rec1, rec2));
     }
 }
