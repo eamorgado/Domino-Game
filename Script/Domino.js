@@ -138,6 +138,69 @@ class Domino {
         }
         return 'nomatch';
     }
+    matchVersus(d1, d2, relative_to, size) {
+        //console.log("Domino.match: "+domino.img_id);        
+        var [splitted, p] = d1 == d2 ? ['90deg', 'vertical'] : ['0deg', 'horizontal'];
+        var [r1, r2] = [this.rec1, this.rec2];
+        var comp;
+
+        if (relative_to == 'left' && p == 'horizontal')
+            comp = ((splitted == '90deg') ? d2 : d1);
+        else if (relative_to == 'right' && p == 'horizontal')
+            comp = ((splitted == '90deg') ? d1 : d2);
+
+        if (this.isDouble()) {
+            //the two sides are the same
+            if (size == 1) {
+                var sides = new Array();
+                if (r1 == comp && relative_to == 'left') sides.push('match-2sides-left-' + comp);
+                if (r1 == comp && relative_to == 'right') sides.push('match-2sides-right-' + comp);
+                if (sides.length == 0) return 'nomatch';
+                return getRandomElements(sides, 1)[0];
+            } else {
+                if (relative_to == 'left' && r1 == comp) return 'match-2sides-top-' + comp;
+                if (relative_to == 'right' && r1 == comp) return 'match-2sides-bot-' + comp;
+            }
+            return 'nomatch';
+        }
+        //two sides are different
+        if (d1 == d2) {
+            //domino to match is double
+            if (size == 1) {
+                if (r1 == d1) return 'match-r1-both';
+                if (r2 == d1) return 'match-r2-both';
+            } else {
+                if (relative_to == 'left') {
+                    if (r1 == d1) return 'match-r1-right';
+                    if (r2 == d1) return 'match-r2-left';
+                } else {
+                    if (r1 == d1) return 'match-r1-left';
+                    if (r2 == d1) return 'match-r2-right';
+                }
+            }
+            return 'nomatch'
+        }
+        //domino piece is horizontal
+        if (size == 1) {
+            var sides = new Array();
+            //both sides of domino are free => check r1-top r1-bot r2-top r2-bot
+            if (r1 == comp && relative_to == 'left') sides.push('match-r1-right-top-' + comp);
+            else if (r1 == comp && relative_to == 'right') sides.push('match-r1-left-bot-' + comp);
+
+            if (r2 == comp && relative_to == 'left') sides.push('match-r2-left-top-' + comp);
+            else if (r2 == comp && relative_to == 'right') sides.push('match-r2-right-bot-' + comp);
+            if (sides.length == 0) return 'nomatch';
+            return getRandomElements(sides, 1)[0];
+        }
+        if (relative_to == 'left') {
+            if (r1 == comp) return 'match-r1-right-' + comp;
+            if (r2 == comp) return 'match-r2-left-' + comp;
+        } else { //only one side is free => check bot or tod depending on relative
+            if (r1 == comp) return 'match-r1-left-' + comp;
+            if (r2 == comp) return 'match-r2-right-' + comp;
+        }
+        return 'nomatch';
+    }
 }
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/

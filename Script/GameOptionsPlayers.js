@@ -70,5 +70,5 @@ function cleanUp() {
 }
 
 function quitGamePlayers() {
-    cleanUp()
+    leave(username, password);
 }

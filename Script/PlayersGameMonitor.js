@@ -37,6 +37,25 @@ function clickPossible(p_obj) {
         parent.removeChild(document.getElementById('DM-Flip-' + op + '-' + rec1 + '-' + rec2));
         parent.removeChild(document.getElementById('DM-Flip-' + side + '-' + rec1 + '-' + rec2));
         [rec1, rec2] = rec2 >= rec1 ? [rec2, rec1] : [rec1, rec2];
+        [rec1, rec2] = [Number(rec1), Number(rec2)];
+        console.log("Piece: [" + rec1 + ',' + rec2 + ']  Side ' + side);
+
         notify(username, password, GAME_ID, side, new Array(rec1, rec2));
     }
+}
+
+function checkMatch(b) {
+    var size = b.length;
+    if (size == 0) return true;
+    var comp = size == 1 ? new Array(b[0]) : new Array(b[0], b[size - 1]);
+    for (let [k, v] of player.hand) {
+        if (comp.length == 1) {
+            if (v.matchVersus(comp[0][0], comp[0][1], 'left', size) != 'nomatch') return true;
+            if (v.matchVersus(comp[0][0], comp[0][1], 'right', size) != 'nomatch') return true;
+        } else {
+            if (v.matchVersus(comp[0][0], comp[0][1], 'left', size) != 'nomatch') return true;
+            if (v.matchVersus(comp[1][0], comp[1][1], 'right', size) != 'nomatch') return true;
+        }
+    }
+    return false;
 }

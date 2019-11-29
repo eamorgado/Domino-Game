@@ -1,7 +1,5 @@
 const BASE_URL = "http://twserver.alunos.dcc.fc.up.pt:8008/";
-var GAME_ID;
-var SOURCE;
-var TURN;
+var GAME_ID, SOURCE, TURN, STACK;
 var flag;
 var username, password, adv_name;
 var player, adv, players_board;
@@ -83,6 +81,7 @@ function updateAdv(count) {
 }
 
 function updateStack(stack) {
+    STACK = stack;
     document.getElementById('Player-Stack').textContent = 'Stack Pieces: ' + stack + ' | Turn: ' + TURN;
 }
 
@@ -126,10 +125,25 @@ function update(user, gameid) {
             updatePlayer();
             if (data.board.line)
                 updateGameBoard(data.board.line);
-            for (let [k, v] of player.hand) {
-                var piece = document.getElementById(k);
-                piece.setAttribute('class', 'DM-normal');
-                piece.addEventListener('onclick', enableUserSelection(piece, k));
+            if (TURN == username) {
+                var match = checkMatch(data.board.line);
+                if (match)
+                    for (let [k, v] of player.hand) {
+                        var piece = document.getElementById(k);
+                        piece.setAttribute('class', 'DM-normal');
+                        piece.addEventListener('onclick', enableUserSelection(piece, k));
+                    }
+                else {
+                    //No match => take stack if not empty
+                    if (STACK == 0) {
+                        messageUser('starter', 'No piece matches, Stack is empty. Passing turn');
+                        notify(username, password, GAME_ID, undefined, undefined, null)
+                    } else {
+                        messageUser('starter', 'No piece matches, taking from Stack');
+                        notify(username, password, GAME_ID, undefined, null, undefined);
+                    }
+
+                }
             }
         }
         if (data["winner"] != undefined) {
@@ -150,9 +164,12 @@ function update(user, gameid) {
 function notify(user, pass, gameid, side, piece, skip) {
     const url = BASE_URL + 'notify';
     const input = { 'nick': user, 'pass': pass, 'game': gameid };
-    if (side) input['side'] = side;
-    if (piece) input['piece'] = piece;
-    if (skip) input['skip'] = skip;
+    console.log(piece);
+
+    if (piece != undefined) input['piece'] = piece;
+    if (side != undefined) input['side'] = side;
+
+    if (skip != undefined) input['skip'] = skip;
     dataPost(url, input)
         .then(data => {
             console.log("Notify: " + JSON.stringify(data));
@@ -164,9 +181,31 @@ function notify(user, pass, gameid, side, piece, skip) {
                 if (data.side != undefined) {
                     messageUser('starter', 'Pick side');
                     sidePicker(rec1, rec2, p);
+                } else if (data.piece != undefined) {
+                    //added piece
+                    var rec1, rec2, p, [rec1, rec2, p] = extractPieceParts(data.piece);
+                    player.hand.set(p, new Domino(rec1, rec2, false, 'vertical', 'player', p));
                 } else {
+                    // notify {}
                     player.hand.delete(p);
                 }
+            }
+        });
+}
+
+function
+leave(user, pass) {
+    const url = BASE_URL + 'leave';
+    const input = { 'nick': user, 'pass': pass, 'game': GAME_ID };
+    dataPost(url, input)
+        .then(data => {
+            console.log('Leaave: ' + JSON.stringify(data));
+            if (data.error != undefined) {
+                console.log(data.error);
+                messageUser('starter', data.error);
+            } else {
+                GAME_ID = null;
+                cleanUp();
             }
         });
 }
