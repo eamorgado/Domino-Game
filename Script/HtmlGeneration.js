@@ -14,19 +14,52 @@ var pieces = new Array("DM-0-0", "DM-0-1", "DM-0-2", "DM-0-3", "DM-0-4", "DM-0-5
     "DM-6-6");
 
 
-function addBlank(i, left, right, width) {
+function addBlank(i, left, right, width, side) {
     var path = 'Assets/DominoPieces/';
     var img = document.createElement('img');
     img.src = path + 'DM-Flip.png';
     img.style.width = '5%';
     img.style.height = '5%';
     //var img = document.createElement('div');
-    img.setAttribute('class', 'DM-flipped');
+    img.setAttribute('class', 'DM-normal');
     img.setAttribute('id', 'DM-Flip-' + i);
     img.style.display = 'fixed';
     img.style.marginLeft = left + 'px';
     img.style.marginRight = right + 'px';
     img.style.transform = 'rotate(0deg)';
+    var splitted = img.style.transform;
+    splitted = splitted.split('(')[1].split(')')[0];
+    var angle = splitted;
+    var origin, translate = new Array();
+    if (splitted == '0deg' || splitted == '180deg') {
+        if (side == 'left') {
+            if (splitted == '0deg') angle = '270deg';
+            else if (splitted == '180deg') angle = '90deg';
+            else console.log("rotatePiece: error rotating vertical left |" + splitted + "| " + (splitted == '0deg'));
+        } else if (side == 'right') {
+            if (splitted == '0deg') angle = '90deg';
+            else if (splitted == '180deg') angle = '270deg';
+            else console.log("rotatePiece: error rotating vertical right |" + splitted + "| " + (splitted == '0deg'));
+        }
+    } else {
+        if (side == 'left') {
+            if (splitted == '90deg') angle = '0deg';
+            else if (splitted == '270deg') angle = '180deg';
+            else console.log("rotatePiece: error rotating horizontal left |" + splitted + "|");
+        } else if (side == 'right') {
+            if (splitted == '90deg') angle = '180deg';
+            else if (splitted == '270deg') angle = '0deg';
+            else console.log("rotatePiece: error rotating horizontal right |" + splitted + "|");
+        }
+    }
+    //console.log("\n\nRotating "+id+" start: "+splitted+" side:"+side+" finish:"+angle+"\n\n");
+    var str = 'rotate(' + angle + ')';
+    //img.style.transformOrigin = 'center bottom';
+    img.style.webkitTransform = str;
+    img.style.mozTransform = str;
+    img.style.msTransform = str;
+    img.style.oTransform = str;
+    img.style.transform = str;
     return img;
 }
 

@@ -1,29 +1,4 @@
 /*------------------------------------------------------------------------------
-                Functions for flipping pieces/ checking flip
-------------------------------------------------------------------------------*/
-function flipPiece(piece) {
-    var elem = document.getElementById(piece);
-    var path = 'Assets/DominoPieces/';
-    if (elem.className == 'DM-flipped') {
-        elem.firstChild.src = path + piece + '.png';
-        elem.className = 'DM-displayed';
-        return false;
-    } else {
-        elem.firstChild.src = path + 'DM-Flip.png';
-        elem.className = 'DM-flipped';
-        return true;
-    }
-}
-
-function checkFlipped(piece) {
-    var elem = document.getElementById(piece);
-    return elem.className == 'DM-flipped';
-}
-
-
-
-
-/*------------------------------------------------------------------------------
                             Domino Class
 ------------------------------------------------------------------------------*/
 class Domino {

@@ -25,8 +25,10 @@ function newGamePlayers() {
 
                 player1 = 'Player-Adv';
                 player2 = 'Player-' + username;
+
                 player = new Player(player2);
                 adv = new Player(player1);
+                players_board = new Board('Board');
                 generateGameBoard('human-page', player1, player2);
                 var hands = data.hand;
                 appendPieces(player, hands, false);
@@ -36,15 +38,21 @@ function newGamePlayers() {
         .catch(console.log);
 }
 
+function extractPieceParts(piece) {
+    //piece = [_,_]
+    var rec1, rec2;
+    [rec1, rec2] = (piece[0] >= piece[1] ? [piece[1], piece[0]] : [piece[0], piece[1]]);
+    var p = 'DM-' + rec1 + '-' + rec2;
+    return [rec1, rec2, p];
+}
+
 
 function appendPieces(pl, hand, is_adv) {
     for (let piece of hand) {
         //piece = [_,_]
-        if (!is_adv) {
-            var first, sec;
-            [first, sec] = (piece[0] >= piece[1] ? [piece[1], piece[0]] : [piece[0], piece[1]]);
-            var p = 'DM-' + first + '-' + sec;
-        } else var p = piece;
+        var first, sec, p;
+        if (!is_adv)[first, sec, p] = extractPieceParts(piece)
+        else p = piece;
         pl.addPiece(new Array(p), false, 5, 5, is_adv, '5%', !is_adv, false);
     }
 }
