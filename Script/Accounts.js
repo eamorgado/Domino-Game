@@ -82,12 +82,12 @@ function updateAdv(count) {
 
 function updateStack(stack) {
     STACK = stack;
-    document.getElementById('Player-Stack').textContent = 'Stack Pieces: ' + stack + ' | Turn: ' + TURN;
+    document.getElementById('Player-Stack-player').textContent = 'Stack Pieces: ' + stack + ' | Turn: ' + TURN;
 }
 
 function updateGameBoard(gameboard) {
     //gameboard [ [recx,recy],[recy,recz] ]
-    var b = document.getElementById('Game-Board');
+    var b = document.getElementById('Game-Board-player');
     //remove all children
     while (b.firstElementChild) b.removeChild(b.firstElementChild);
     //extractPieceParts(piece);
@@ -118,30 +118,39 @@ function update(user, gameid) {
         if (data["turn"] != undefined) {
             TURN = data['turn'];
             //Update stack-------
+            STACK = 0;
             if (data.board.stock)
                 updateStack(data.board['stock']);
             //Update adv------
             updateAdv(data.board.count);
+            //Update cur player---
             updatePlayer();
+
+            //Update game board ----
             if (data.board.line)
                 updateGameBoard(data.board.line);
+
+            //It is our turn
             if (TURN == username) {
                 var match = checkMatch(data.board.line);
                 console.log("[User: " + username + ', Has Match: ' + match + ']\n');
-                if (match)
+                if (match) {
+                    //There is at least one piece that matches => addEventlistner
                     for (let [k, v] of player.hand) {
                         var piece = document.getElementById(k);
                         piece.setAttribute('class', 'DM-normal');
                         piece.addEventListener('onclick', enableUserSelection(piece, k));
                     }
-                else {
+                } else {
                     //No match => take stack if not empty
                     if (STACK == 0) {
+                        //Stack empty => Pass turn
                         messageUser('starter', 'No piece matches, Stack is empty. Passing turn');
-                        notify(username, password, GAME_ID, undefined, undefined, null)
+                        notify(username, password, GAME_ID, undefined, undefined, null);
                     } else {
-                        messageUser('starter', 'No piece matches, taking from Stack');
-                        notify(username, password, GAME_ID, undefined, null, undefined);
+                        //Stack not empty take one piece
+                        messageUser('starter', 'No piece matches, take from Stack');
+                        createStackRetriever();
                     }
 
                 }
@@ -176,21 +185,24 @@ function notify(user, pass, gameid, side, piece, skip) {
                 messageUser('starter', data.error);
             } else {
                 var rec1, rec2, p;
-                [rec1, rec2, p] = extractPieceParts(piece);
                 if (data.side != undefined) {
+                    [rec1, rec2, p] = extractPieceParts(piece);
                     messageUser('starter', 'Pick side');
                     sidePicker(rec1, rec2, p);
-                    return;
                 }
                 if (data.piece != undefined) {
                     //added piece
                     console.log('Piece to be added: ' + data.piece);
+                    //var arr = new Array(Number(data.piece[0]), Number(data.piece[1]));
                     appendPieces(player, new Array(data.piece), false);
                     updatePlayer();
-                    return;
                 }
                 // notify {}
-                player.hand.delete(p);
+                if (side != undefined) {
+                    [rec1, rec2, p] = extractPieceParts(piece);
+                    player.hand.delete(p);
+                }
+                updatePlayer();
             }
         });
 }

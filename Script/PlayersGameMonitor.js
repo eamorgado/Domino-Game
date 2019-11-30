@@ -13,7 +13,7 @@ function enableUserSelection(piece_obj, piece) {
 
 
 function sidePicker(rec1, rec2, pice) {
-    var gb = document.getElementById('Game-Board');
+    var gb = document.getElementById('Game-Board-player');
     var side = rec1 == rec2 ? undefined : 'right';
     var p1 = addBlank('DM-Flip-start-' + rec1 + '-' + rec2, 5, 5, '5%', side);
     var p2 = addBlank('DM-Flip-end-' + rec1 + '-' + rec2, 5, 5, '5%', side);
@@ -58,4 +58,24 @@ function checkMatch(b) {
         }
     }
     return false;
+}
+
+
+function createStackRetriever() {
+    var str = "<span id=\"stack-taker\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\"> Take from Stack</button></span>";
+    generateHtml(document.getElementById('Player-Stack-player'), str);
+    var stk = document.getElementById('stack-taker');
+    stk.addEventListener('onclick', takePieceStack(stk));
+}
+
+function takePieceStack(obj) {
+    obj.onclick = function(obj) {
+        if (STACK == 0) {
+            messageUser('starter', 'No piece matches, Stack is empty. Passing turn');
+            notify(username, password, GAME_ID, undefined, undefined, null);
+        } else {
+            document.getElementById('Player-Stack-player').removeChild(this);
+            notify(username, password, GAME_ID, undefined, null, undefined);
+        }
+    }
 }

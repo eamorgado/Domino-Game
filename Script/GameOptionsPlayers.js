@@ -39,6 +39,8 @@ function newGamePlayers() {
 }
 
 function extractPieceParts(piece) {
+    console.log('extractPieceParts: ' + piece);
+
     //piece = [_,_]
     var rec1, rec2;
     [rec1, rec2] = (piece[0] >= piece[1] ? [piece[1], piece[0]] : [piece[0], piece[1]]);

@@ -162,18 +162,18 @@ function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right, is
 
 function generateGameBoard(id, player1, player2) {
     var game_page = document.getElementById(id).getElementsByClassName('overlay-content')[0];
-
+    var extra = id == 'human-page' ? '-player' : '';
     var board = document.createElement('div');
-    board.setAttribute('id', 'Board');
+    board.setAttribute('id', 'Board' + extra);
     var player1_side = document.createElement('div');
     player1_side.setAttribute('id', player1);
     player1_side.setAttribute('class', 'player-class');
 
     var board_side = document.createElement('div');
-    board_side.setAttribute('id', 'Game-Board');
+    board_side.setAttribute('id', 'Game-Board' + extra);
 
     var stack_side = document.createElement('div');
-    stack_side.setAttribute('id', 'Player-Stack');
+    stack_side.setAttribute('id', 'Player-Stack' + extra);
 
     var player2_side = document.createElement('div');
     player2_side.setAttribute('id', player2);
