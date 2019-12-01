@@ -158,6 +158,17 @@ table.tb-results td {
     color: #F9C426;
 }
 
+#ai-levels {
+    font-size: 25px;
+    text-align: center;
+    color: #F9C426;
+    background-color: #444;
+}
+
+#ai-levels select option {
+    text-align: center;
+}
+
 
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/

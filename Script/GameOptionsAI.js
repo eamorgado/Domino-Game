@@ -6,6 +6,8 @@ async function newGame() {
     //retrieve new-game node and hide it
     var ng = document.getElementById('new-game-ai');
     ng.style.display = 'none';
+
+    document.getElementById('ai-options').style.display = 'none';
     //retrieve quit-game node and display it
     var qg = document.getElementById("quit-game-ai");
     qg.style.display = "inline-block";
@@ -28,6 +30,7 @@ function quitGame() {
         updateLeaderBoard(0, 1);
     }
     document.getElementById("quit-game-ai").style.display = "none";
+    document.getElementById('ai-options').style.display = 'block';
     document.getElementById('new-game-ai').style.display = 'inline-block';
     var content = document.getElementById('Board');
 

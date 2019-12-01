@@ -162,7 +162,7 @@ function gameHasEnded() {
             loser = 1;
         } else if (players[1].hand.size == 0) {
             console.log(players[1].getName() + " WON!");
-            gameResults(players[0].getName(), false);
+            gameResults(players[1].getName(), false);
             winner = 1;
             loser = 0;
         }
