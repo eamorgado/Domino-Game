@@ -8,7 +8,6 @@ class Player {
         this.hand = new Map();
     }
 
-    isAI() { return this.player == 'Player-AI'; }
     getName() { return this.player; }
     getHand() { return this.hand; }
     addPoints(points) { this.points += points; }
@@ -29,10 +28,11 @@ class Player {
 
         if (!d.isDouble()) {
             d.rotatePiece('left');
-            side = 'left'
-        };
+            side = 'left';
+        }
         givePieces(b, new Array(id), false, 1, 1, false, '5%', false, before, side);
     }
+
     findPlayerMatch(board, check) {
         /**
          * This function checks if player has at least one piece that makes match
@@ -55,8 +55,7 @@ class Player {
             move, piece, is_top;
         for (let i = 0; i < 2; i++) {
             for (let [k, v] of options[i]) {
-                console.log(k);
-
+                //console.log(k);
                 let points = this.hand.get(k).getPoints();
                 if (points > max)[max, piece, move, is_top] = [points, k, v, ((i == 0) ? true : false)];
                 else if (points == max)
@@ -279,7 +278,7 @@ class Player {
         //Stack was not empty so return false
         return false;
     }
-    addPiece(pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover, is_stack) {
+    addPiece(pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover, is_stack, flag) {
         /**
          * This function will append the pieces in the array to player hand
          */
@@ -287,14 +286,20 @@ class Player {
             if (!this.hand.has(piece)) { //checks if piece to play isn't in hand
                 if (!is_stack) { //if player isn't stack add dom img
                     var receiver = document.getElementById(this.player);
-                    givePieces(receiver, new Array(piece), add_onclick, margin_lef, margin_right, is_flipped, width, hover);
+                    if (flag)
+                        givePiecesPlayers(receiver, new Array(piece), add_onclick, margin_lef, margin_right, is_flipped, width, hover, undefined, undefined, true);
+                    else
+                        givePieces(receiver, new Array(piece), add_onclick, margin_lef, margin_right, is_flipped, width, hover, undefined, undefined);
                 }
                 //get individual dotted values
                 var splitted = piece.split('-');
                 var rec1 = Number(splitted[1]);
                 var rec2 = Number(splitted[2]);
-                //console.log("addPiece "+piece+" to PLayer-"+this.player+" ["+rec1+","+rec2+"]");
-                var domino = new Domino(rec1, rec2, is_flipped, 'vertical', this.player, piece);
+                //console.log("addPiece " + piece + " [" + rec1 + "," + rec2 + "]");
+                if (flag)
+                    var domino = new Domino(rec1, rec2, 'vertical', piece);
+                else var domino = new Domino(rec1, rec2, is_flipped, 'vertical', this.player, piece);
+
                 this.hand.set(piece, domino);
             } else console.log("addPiece: piece " + piece + " already exists in " + this.player);
         }

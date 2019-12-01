@@ -5,22 +5,26 @@ Css file to handle the styling of the login and register forms, those will
 
 
 /* setting the border of the form */
+
 form.login-modal-content {
     border: 3px solid #F9C426;
 }
-  
-  /* inputs styling */
-  input[type=text], input[type=password], input[type=email] {
+
+
+/* inputs styling */
+
+input[type=text],
+input[type=password],
+input[type=email] {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
-  }
-  
-  
-  button.submit {
+}
+
+button.submit {
     background-color: #F9C426;
     color: #444;
     padding: 14px 20px;
@@ -28,96 +32,126 @@ form.login-modal-content {
     border: none;
     cursor: pointer;
     width: 100%;
-  }
-  
-  
-  button:hover {
+}
+
+button:hover {
     opacity: 0.8;
-  }
-  
-  /* Extra style for the cancel button (red) */
-  .login-cancelbtn {
+}
+
+
+/* Extra style for the cancel button (red) */
+
+.login-cancelbtn {
     width: auto;
     padding: 10px 18px;
     background-color: #f44336;
     border: 3px hidden;
     border-radius: 12.5%;
-  }
-  
-  /* Center the avatar image inside the container */
-  .login-imgcontainer {
+}
+
+
+/* Center the avatar image inside the container */
+
+.login-imgcontainer {
     text-align: center;
     margin: 24px 0 12px 0;
-  }
-  
-  /* Avatar image */
-  img.avatar {
+}
+
+
+/* Avatar image */
+
+img.avatar {
     width: 20%;
     border-radius: 50%;
-  }
-  
-  /* Add padding to containers */
-  .login-container {
+}
+
+
+/* Add padding to containers */
+
+.login-container {
     padding: 16px;
-  }
-  
-  /* The "Forgot password" text */
-  span.psw {
+}
+
+
+/* The "Forgot password" text */
+
+span.psw {
     float: right;
     padding-top: 16px;
-  }
-
+}
 
 
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/
+
+
 /* The Modal (background) */
+
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
     padding-top: 60px;
-  }
-  
-  /* Modal Content/Box */
-  .login-modal-content {
+}
+
+
+/* Modal Content/Box */
+
+.login-modal-content {
     background-color: #fefefe;
     color: black;
-    margin: 5px auto; /* 15% from the top and centered */
+    margin: 5px auto;
+    /* 15% from the top and centered */
     border: 1px solid #888;
-    width: 35%; /* Could be more or less, depending on screen size */
-  }
-  
-  /* The Close Button */
-  .close-login{
+    width: 35%;
+    /* Could be more or less, depending on screen size */
+}
+
+
+/* The Close Button */
+
+.close-login {
     /* Position it in the top right corner outside of the modal */
     position: absolute;
     right: 25px;
-    top: 0; 
+    top: 0;
     color: white;
     font-size: 40px;
     font-weight: bold;
-  }
-  
-  /* Close button on hover */
-  .close-login:hover,
-  .close-login:focus {
+}
+
+
+/* Close button on hover */
+
+.close-login:hover,
+.close-login:focus {
     color: red;
     cursor: pointer;
-  }
-  
-  /* Add Zoom Animation */
-  .animate {
+}
+
+
+/* Add Zoom Animation */
+
+.animate {
     -webkit-animation: animatezoom 0.6s;
     animation: animatezoom 0.6s
-  }
+}
+
 
 /*------------------------------------------------------------------------------
 ------------------------------------------------------------------------------*/

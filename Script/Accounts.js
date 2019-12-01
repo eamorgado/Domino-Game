@@ -1,8 +1,8 @@
 const BASE_URL = "http://twserver.alunos.dcc.fc.up.pt:8008/";
-var GAME_ID, SOURCE, TURN, STACK;
+var GAME_ID, SOURCE, TURN, STACK, LINE;
 var flag;
 var username, password, adv_name;
-var player, adv, players_board;
+var PLAYER, ADV, players_board;
 
 
 function messageUser(id, inner_text) {
@@ -61,23 +61,27 @@ function register(username, password) {
 }
 
 function updatePlayer() {
-    var pl = document.getElementById(player.getName());
+    var pl = document.getElementById(PLAYER.getName());
     while (pl.firstElementChild) pl.removeChild(pl.firstElementChild);
-    for (let [k, v] of player.hand)
-        givePieces(pl, new Array(k), false, 5, 5, false, '5%', true);
+    for (let [k, v] of PLAYER.hand)
+        givePiecesPlayers(pl, new Array(k), false, 5, 5, false, '5%', true);
 }
 
 function updateAdv(count) {
     var name = 'Adv';
     for (var user in count)
         if (user != username) { name = user; break; }
+    if (name == username) {
+        messageUser('starter', 'Users have same username, error.');
+        leave(username, password);
+    }
     adv_name = name;
     var ad = document.getElementById('Player-Adv')
     while (ad.firstElementChild) ad.removeChild(ad.firstElementChild);
 
     var ar = new Array();
     for (let i = 0; i < count[name]; i++) ar.push(pieces[i]);
-    appendBlanck(ad, ar, 5, 5, '5%');;
+    appendBlanck(ad, ar, 5, 5, '5%');
 }
 
 function updateStack(stack) {
@@ -86,6 +90,7 @@ function updateStack(stack) {
 }
 
 function updateGameBoard(gameboard) {
+    LINE = gameboard;
     //gameboard [ [recx,recy],[recy,recz] ]
     var b = document.getElementById('Game-Board-player');
     //remove all children
@@ -95,11 +100,11 @@ function updateGameBoard(gameboard) {
         //piece = [_,_]
         var rec1, rec2, id;
         [rec1, rec2, id] = extractPieceParts(piece);
-        console.log("updateGameBoard: " + id);
+        //console.log("updateGameBoard: " + id);
 
         var side;
         side = (piece[0] == rec1 ? (piece[0] == rec2 ? undefined : 'left') : 'right');
-        var p = createPiece(id, false, 5, 5, false, '5%', false, side);
+        var p = createPiecePlayers(id, false, 5, 5, false, '5%', false, side);
         var dom = new Domino(rec1, rec2, false, 'vertical', 'board', id);
         if (side != undefined) dom.rotatePiece();
         players_board.addDominoBot(dom.copyDomino());
@@ -136,10 +141,14 @@ function update(user, gameid) {
                 console.log("[User: " + username + ', Has Match: ' + match + ']\n');
                 if (match) {
                     //There is at least one piece that matches => addEventlistner
-                    for (let [k, v] of player.hand) {
-                        var piece = document.getElementById(k);
-                        piece.setAttribute('class', 'DM-normal');
-                        piece.addEventListener('onclick', enableUserSelection(piece, k));
+                    if (data.board.line.length == 0) {
+                        playMax();
+                    } else {
+                        for (let [k, v] of PLAYER.hand) {
+                            var piece = document.getElementById(k);
+                            piece.setAttribute('class', 'DM-normal');
+                            piece.addEventListener('onclick', enableUserSelection(piece, k));
+                        }
                     }
                 } else {
                     //No match => take stack if not empty
@@ -149,7 +158,6 @@ function update(user, gameid) {
                         notify(username, password, GAME_ID, undefined, undefined, null);
                     } else {
                         //Stack not empty take one piece
-                        messageUser('starter', 'No piece matches, take from Stack');
                         createStackRetriever();
                     }
 
@@ -158,13 +166,8 @@ function update(user, gameid) {
         }
         if (data["winner"] != undefined) {
             messageUser('starter', 'Player ' + data['winner'] + ' has won');
-            var date = new Date().toDateString();
-            winner = data['winner'];
-            var s = (winner == username) ? "<b style=\"color: green;\">" + winner + "</b> won match" : "<b style=\"color: red;\">" + winner + "</b> won match";
-            var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0];
-            var str = "<p><br><span class=\"leaders\"><b>" + username + "  VS  " + winner + "  " + date + "  Result: " + s + "</b></span></p>";
-            generateHtml(leader_page, str);
-            leave();
+            cleanUp();
+            SOURCE.close();
         }
     };
 }
@@ -189,18 +192,24 @@ function notify(user, pass, gameid, side, piece, skip) {
                     [rec1, rec2, p] = extractPieceParts(piece);
                     messageUser('starter', 'Pick side');
                     sidePicker(rec1, rec2, p);
-                }
-                if (data.piece != undefined) {
+                } else if (data.piece != undefined) {
                     //added piece
                     console.log('Piece to be added: ' + data.piece);
                     //var arr = new Array(Number(data.piece[0]), Number(data.piece[1]));
-                    appendPieces(player, new Array(data.piece), false);
+                    appendPieces(PLAYER, new Array(data.piece), false);
                     updatePlayer();
+                    var match = checkMatch(LINE);
+                    console.log("[User: " + username + ', Has Match: ' + match + ']\n');
+                    if (match) {
+                        notify(username, password, GAME_ID, undefined, data.piece);
+                    }
                 }
                 // notify {}
-                if (side != undefined) {
-                    [rec1, rec2, p] = extractPieceParts(piece);
-                    player.hand.delete(p);
+                else {
+                    if (piece) {
+                        [rec1, rec2, p] = extractPieceParts(piece);
+                        PLAYER.hand.delete(p);
+                    }
                 }
                 updatePlayer();
             }
@@ -220,6 +229,40 @@ function leave(user, pass) {
                 GAME_ID = null;
                 cleanUp();
                 SOURCE.close();
+            }
+        });
+}
+
+
+function ranking() {
+    const url = BASE_URL + 'ranking';
+    dataPost(url)
+        .then(data => {
+            if (data.error != undefined)
+                messageUser('starter', data.error);
+            else {
+                var tr, t, cont;
+                tr = document.createElement('tr');
+                tr.setAttribute('id', 'PVP-H');
+                tr.setAttribute('class', 'tb-r-head');
+                cont = new Array('User', 'Victories', 'Games Played');
+                for (let el of cont) {
+                    t = document.createElement('th');
+                    t.innerHTML = el;
+                    tr.appendChild(t);
+                }
+                document.getElementById('PVP-Table').appendChild(tr);
+                var ranks = data.ranking; //[{},{},...]
+                for (let r of ranks) {
+                    cont = new Array(r.nick, r.victories, r.games);
+                    tr = document.createElement('tr');
+                    for (let k of cont) {
+                        t = document.createElement('td');
+                        t.textContent = k
+                        tr.appendChild(t);
+                    }
+                    document.getElementById('PVP-Table').appendChild(tr);
+                }
             }
         });
 }

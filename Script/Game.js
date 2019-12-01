@@ -95,6 +95,7 @@ function isGameOver() {
     var up, down;
 
     var span = document.getElementById(top.getId());
+
     span = span.style.transform.split('(')[1].split(')')[0];
     if (span == '0deg' || span == '180deg') up = top.getRec1();
     else up = (span == '90deg') ? top.getRec2() : top.getRec1();
@@ -414,24 +415,11 @@ function place(piece, poss) {
 }
 
 function turn(my_turn) {
-    var s = my_turn ? "It is your turn to play" : "It is Player-" + players[0].player + "'s turn to play";
-    var str =
-        "<div id=\"turn\" class=\"modal\">" +
-        "<form class=\"login-modal-content animate\" action=\"#\">" +
-        "<div class=\"login-container\"><h2>Game Turn</h2></div>" +
-        "<div class=\"login-container\"><center><h2>" + s + "</h2></center></div>" +
-        "<div class=\"login-container\" styler=\"background-color:#f1f1f1\">" +
-        "<button id='ok-turn' type=\"button\" class=\"submit\">OK</button>" +
-        "</div>" +
-        "</form>" +
-        "</div>";
-    generateHtml(document.getElementById('ai-page'), str);
-    document.getElementById('turn').style.zIndex = '5';
-    document.getElementById('turn').style.display = 'block';
-    document.getElementById('ok-turn').onclick = function() {
-        var game_p = document.getElementById('ai-page').removeChild(document.getElementById('turn'));
-    }
+    var p = username != undefined ? username : 'Human';
+    var p = my_turn ? p : 'AI';
 
+    var stack_h = document.getElementById('Player-Stack');
+    stack_h.textContent = 'Stack Pieces: ' + players[2].getHand().size + '  |  Turn: ' + p;
 }
 
 function noMatch(piece) {
@@ -475,9 +463,8 @@ function infoStack(is_me) {
     }
 }
 
-
 function gameResults(winner, draw) {
-    var s = (winner == "Player-" + players[1].player) ? 'You <b style=\"color: green;\">WON</b>' : 'You <b style=\"color: red;\">lost :(</b>';
+    var s = (winner == players[1].player) ? 'You <b style=\"color: green;\">WON</b>' : 'You <b style=\"color: red;\">lost :(</b>';
     var s = draw ? 'Game was a <b>draw</b>' : s;
     var str =
         "<div id=\"game-results\" class=\"modal\">" +
@@ -496,16 +483,38 @@ function gameResults(winner, draw) {
     }
 }
 
-
 function updateLeaderBoard(winner, loser) {
     var date = new Date().toDateString();;
     winner = players[winner].getName();
     loser = players[loser].getName();
-    var s = (winner == loser) ? "Game was draw" : ((winner == players[1].getName()) ?
-        "<b style=\"color: green;\">" + winner + "</b> won match" : "<b style=\"color: red;\">" + winner + "</b> won match");
+    var draw = winner == loser;
+    winner = (winner == players[1].getName() ?
+        (username != undefined ? username : 'Human') : 'AI'
+    );
+    var p = username != undefined ? username : 'Human';
+    var results = new Array(draw, winner, date, p);
+    if (typeof(Storage) !== "undefined") {
+        var map;
+        if (localStorage.computerGameResults == undefined) {
+            map = new Map();
+            map.set(1, results);
+            localStorage.computerGameResults = JSON.stringify(Array.from(map.entries()));
+        } else {
+            map = new Map(JSON.parse(localStorage.computerGameResults));
+            var i = map.size + 1;
+            map.set(i, results);
+            localStorage.computerGameResults = JSON.stringify(Array.from(map.entries()));
+        }
+    } else {
+        /*var date = new Date().toDateString();;
+        winner = players[winner].getName();
+        loser = players[loser].getName();
+        var s = (winner == loser) ? "Game was draw" : ((winner == players[1].getName()) ?
+            "<b style=\"color: green;\">" + winner + "</b> won match" : "<b style=\"color: red;\">" + winner + "</b> won match");
 
 
-    var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0]
-    var str = "<p><br><span class=\"leaders\"><b>" + players[0].getName() + "  VS  " + players[1].getName() + "  " + date + "  Result: " + s + "</b></span></p>"
-    generateHtml(leader_page, str);
+        var leader_page = document.getElementById('leader-page').getElementsByClassName('overlay-content')[0]
+        var str = "<p><br><span class=\"leaders\"><b>" + players[0].getName() + "  VS  " + players[1].getName() + "  " + date + "  Result: " + s + "</b></span></p>"
+        generateHtml(leader_page, str);*/
+    }
 }

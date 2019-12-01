@@ -13,57 +13,20 @@ var pieces = new Array("DM-0-0", "DM-0-1", "DM-0-2", "DM-0-3", "DM-0-4", "DM-0-5
     "DM-5-5", "DM-5-6",
     "DM-6-6");
 
-
-function addBlank(i, left, right, width, side) {
-    var path = 'Assets/DominoPieces/';
-    var img = document.createElement('img');
-    img.src = path + 'DM-Flip.png';
-    img.style.width = '5%';
-    img.style.height = '5%';
+function addBlank(i, left, right, width) {
+    var img = document.createElement('span');
+    img.style.fontSize = '5vw';
+    img.innerHTML = '&#127074;';
     //var img = document.createElement('div');
     img.setAttribute('class', 'DM-normal');
     img.setAttribute('id', i);
     img.style.display = 'fixed';
     img.style.marginLeft = left + 'px';
     img.style.marginRight = right + 'px';
-    img.style.transform = 'rotate(0deg)';
-    var splitted = img.style.transform;
-    splitted = splitted.split('(')[1].split(')')[0];
-    var angle = splitted;
-    var origin, translate = new Array();
-    if (splitted == '0deg' || splitted == '180deg') {
-        if (side == 'left') {
-            if (splitted == '0deg') angle = '270deg';
-            else if (splitted == '180deg') angle = '90deg';
-            else console.log("rotatePiece: error rotating vertical left |" + splitted + "| " + (splitted == '0deg'));
-        } else if (side == 'right') {
-            if (splitted == '0deg') angle = '90deg';
-            else if (splitted == '180deg') angle = '270deg';
-            else console.log("rotatePiece: error rotating vertical right |" + splitted + "| " + (splitted == '0deg'));
-        }
-    } else {
-        if (side == 'left') {
-            if (splitted == '90deg') angle = '0deg';
-            else if (splitted == '270deg') angle = '180deg';
-            else console.log("rotatePiece: error rotating horizontal left |" + splitted + "|");
-        } else if (side == 'right') {
-            if (splitted == '90deg') angle = '180deg';
-            else if (splitted == '270deg') angle = '0deg';
-            else console.log("rotatePiece: error rotating horizontal right |" + splitted + "|");
-        }
-    }
-    //console.log("\n\nRotating "+id+" start: "+splitted+" side:"+side+" finish:"+angle+"\n\n");
-    var str = 'rotate(' + angle + ')';
-    //img.style.transformOrigin = 'center bottom';
-    img.style.webkitTransform = str;
-    img.style.mozTransform = str;
-    img.style.msTransform = str;
-    img.style.oTransform = str;
-    img.style.transform = str;
     return img;
 }
 
-function appendBlanck(receiver, pieces_array, left, right, width) {
+function appendBlanck(receiver, pieces_array, left, right, width, flag) {
     var i = 0;
     for (let p of pieces_array)
         receiver.appendChild(addBlank(i++, left, right, width));
@@ -157,6 +120,67 @@ function givePieces(rec, pieces_array, add_onclick, margin_lef, margin_right, is
                 //console.log("givePieces: adding before");            
             receiver.prepend(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width, hover, side));
         } else receiver.appendChild(createPiece(piece, add_onclick, margin_lef, margin_right, is_flipped, width, hover, side));
+    }
+}
+
+
+
+function createPiecePlayers(id, add_onclick, left, right, is_flipped, width, hover, side, flag) {
+    var rec1, rec2, split;
+    split = id.split('-');
+    [rec1, rec2] = [Number(split[1]), Number(split[2])];
+    //console.log([rec1, rec2]);
+
+    var img = document.createElement('span');
+    if (!flag && !side) {
+        img.style.width = '5vw';
+    }
+    img.innerHTML = is_flipped ? '&#127074;' : codeVertical(rec1, rec2);
+
+    img.style.fontSize = '5vw';
+
+    //var img = document.createElement('div');
+    img.setAttribute('class', ('DM-' + ((is_flipped) ? 'flipped' : 'displayed')));
+    img.setAttribute('id', id);
+    img.style.display = 'fixed';
+
+    if (add_onclick) {
+        img.innerHTML = '&#127074;'
+        var onclick = img.getAttribute('onclick');
+        img.onclick = function() {
+            if (img.className == 'DM-flipped') {
+                img.innerHTML = codeVertical(rec1, rec2);
+                img.className = 'DM-displayed';
+            } else {
+                img.innerHTML = '&#127074;'
+                img.className = 'DM-flipped';
+            }
+        };
+    }
+    if (hover) {
+        img.onmouseover = function() {
+            img.style.filter = 'invert(100%)';
+        };
+        img.onmouseout = function() {
+            img.style.filter = 'invert(0%)';
+        };
+    } else { img.className = 'DM-normal'; }
+    if (side)
+        img.innerHTML = side == 'left' ? codeHorizontal(rec1, rec2) : codeHorizontal(rec2, rec1);
+    return img;
+}
+
+function givePiecesPlayers(rec, pieces_array, add_onclick, margin_lef, margin_right, is_flipped, width, hover, before, side, flag) {
+    var receiver = rec,
+        choice = false;
+    if (Array.isArray(rec))[receiver, choice] = [rec[0], true]
+    for (let p of pieces_array) {
+        let piece = choice ? p + rec[1] : p;
+        if (before) {
+            var first = receiver.firstElementChild
+                //console.log("givePieces: adding before");            
+            receiver.prepend(createPiecePlayers(piece, add_onclick, margin_lef, margin_right, is_flipped, width, hover, side, flag));
+        } else receiver.appendChild(createPiecePlayers(piece, add_onclick, margin_lef, margin_right, is_flipped, width, hover, side, flag));
     }
 }
 

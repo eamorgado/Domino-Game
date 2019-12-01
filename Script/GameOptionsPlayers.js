@@ -23,28 +23,33 @@ function newGamePlayers() {
                 document.getElementById("game-in-progress").style.display = "block";
                 document.getElementById("inst-on-game-players").style.display = 'block';
 
-                player1 = 'Player-Adv';
-                player2 = 'Player-' + username;
+                var p1 = 'Player-Adv';
+                var p2 = 'Player-' + username;
 
-                player = new Player(player2);
-                adv = new Player(player1);
-                players_board = new Board('Board');
-                generateGameBoard('human-page', player1, player2);
+                PLAYER = new Player(p2);
+                ADV = new Player(p1);
+                players_board = new Board('Game-Board-player');
+                generateGameBoard('human-page', p1, p2);
                 var hands = data.hand;
-                appendPieces(player, hands, false);
-                update(username, GAME_ID);
+                if (hands == null) {
+                    messageUser('starter', 'Empty hand, try again.');
+                    leave(username, password);
+                } else {
+                    appendPieces(PLAYER, hands, false);
+                    update(username, GAME_ID);
+                }
             }
         })
         .catch(console.log);
 }
 
 function extractPieceParts(piece) {
-    console.log('extractPieceParts: ' + piece);
+    //console.log('extractPieceParts: ' + piece);
 
     //piece = [_,_]
     var rec1, rec2;
     [rec1, rec2] = (piece[0] >= piece[1] ? [piece[1], piece[0]] : [piece[0], piece[1]]);
-    var p = 'DM-' + rec1 + '-' + rec2;
+    var p = 'PDM-' + rec1 + '-' + rec2;
     return [rec1, rec2, p];
 }
 
@@ -55,7 +60,7 @@ function appendPieces(pl, hand, is_adv) {
         var first, sec, p;
         if (!is_adv)[first, sec, p] = extractPieceParts(piece)
         else p = piece;
-        pl.addPiece(new Array(p), false, 5, 5, is_adv, '5%', !is_adv, false);
+        pl.addPiece(new Array(p), false, 5, 5, is_adv, '5%', !is_adv, false, true);
     }
 }
 
@@ -63,7 +68,7 @@ function cleanUp() {
     document.getElementById("quit-game-players").style.display = "none";
     document.getElementById('new-game-players').style.display = 'inline-block';
     document.getElementById('connect-opt').style.display = 'block';
-    var content = document.getElementById('Board');
+    var content = document.getElementById('Board-player');
     var parent = content.parentElement;
     parent.removeChild(content);
     document.getElementById("game-in-progress").style.display = "none";

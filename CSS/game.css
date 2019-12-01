@@ -56,6 +56,17 @@ div[id="human-page"].overlay {
                     New game buttons quit game buttons
 ------------------------------------------------------------------------------*/
 
+.bt-red {
+    padding: 15px 20px;
+    margin: 8px 0;
+    border: 3px hidden;
+    border-radius: 15%;
+    width: auto;
+    cursor: pointer;
+    font-size: 15px;
+    background-color: #f44336;
+}
+
 #new-game-ai,
 #new-game-players,
 #quit-game-ai,
@@ -95,13 +106,15 @@ div[id="human-page"].overlay {
 #quit-game-ai:hover,
 #quit-game-players:hover,
 #new-game-ai:hover,
-#new-game-players:hover {
+#new-game-players:hover,
+.bt-red:hover {
     animation: shake 4s;
     animation-iteration-count: infinite;
 }
 
 #quit-game-ai:hover,
-#quit-game-players:hover {
+#quit-game-players:hover,
+.bt-red:hover {
     filter: invert(75%);
 }
 
@@ -112,7 +125,7 @@ div[id="human-page"].overlay {
 
 #Board,
 #Board-player {
-    width: 100vw;
+    width: 90vw;
     height: 100%;
     padding: 10px 0 10px 0;
 }
@@ -121,9 +134,9 @@ div[id="human-page"].overlay {
     display: flex;
     justify-content: center;
     /* align horizontal */
-    align-items: baseline;
+    align-items: center;
     /* align vertical */
-    width: 100vw;
+    width: 90vw;
     overflow-x: auto;
     padding: 20px 0 20px 0;
     margin-bottom: 5px;
@@ -144,17 +157,17 @@ div[id="human-page"].overlay {
 
 #Game-Board,
 #Game-Board-player {
-    position: sticky;
     top: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: baseline;
     /* align vertical */
     flex-direction: row;
     overflow-x: auto;
-    width: 90vw;
+    width: 100%;
     height: 100%;
-    padding: 2vh 5vw 2vh 5vw;
+    padding: 2vh 0 2vh 0;
+    margin-left: 5%;
     margin-top: 2vh;
     margin-bottom: 2vh;
 }

@@ -23,6 +23,10 @@ async function newGame() {
 
 
 function quitGame() {
+    if (!isGameOver()) {
+        gameResults(players[0].getName(), false);
+        updateLeaderBoard(0, 1);
+    }
     document.getElementById("quit-game-ai").style.display = "none";
     document.getElementById('new-game-ai').style.display = 'inline-block';
     var content = document.getElementById('Board');

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
     <link rel="icon" href="Assets/favicon.ico" type="image/icon">
 
     <link rel="stylesheet" href="CSS/main.css" type="text/css">
@@ -16,23 +16,23 @@
     <link rel="stylesheet" href="CSS/Miscellaneous/animations.css" type="text/css">
     <link rel="stylesheet" href="CSS/Miscellaneous/medias.css">
     <link rel="stylesheet" href="CSS/Miscellaneous/style.css">
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
-    <!---------------------------Google Font:Roboto------------------------>
+    <!--==================== Google Font:Roboto =============================-->
     <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto:100' rel='stylesheet' type='text/css'>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
     <title>DomiWeb</title>
 </head>
 
 <body>
-    <!-------------------------------Main --------------------------------->
+    <!--============================ Main ===================================-->
     <div class="page-container" id="starter">
         <div class="content-wrap">
-            <!---------------------------NAV BAR----------------------->
+            <!--================== NAV BAR ==================================-->
             <header class="navbar" style="z-index: 1">
-                <img src="Assets/logo2.png" alt="logo" class="logo" width="8%">
+                <img src="Assets/logo2.png" alt="logo" class="logo">
                 <div>
                     <h1>&nbsp;&nbsp;&nbsp;&nbsp;DomiWeb</h1>
                 </div>
@@ -51,26 +51,26 @@
             <div class="row">
                 <div class="column" id="human-human">
                     <span id="h-h-normal"><img src="Assets/human_human.png" alt="Human vs Computer"></span>
-                    <span id="h-h-hover" onclick="openMenu('human-page');"><img id="human-ai-img" src="Assets/human_human-intense.png" width="90%" alt="Human vs Computer"></span>
+                    <span id="h-h-hover" onclick="openMenu('human-page');"><img id="human-ai-img" src="Assets/human_human-intense.png" class="img-vs" alt="Human vs Computer"></span>
                 </div>
                 <img class="domino-center" src="Assets/background.png" alt="Background Domino">
                 <div class="column" id="human-ai">
-                    <span id="h-a-normal"><img src="Assets/human_ai.jpg" width="90%" alt="Human vs Computer"></span>
-                    <span id="h-a-hover" onclick="openMenu('ai-page');"><img src="Assets/human_ai-intense.jpg" width="90%" alt="Human vs Computer"></span>
+                    <span id="h-a-normal"><img src="Assets/human_ai.jpg" class="img-vs" alt="Human vs Computer"></span>
+                    <span id="h-a-hover" onclick="openMenu('ai-page');"><img src="Assets/human_ai-intense.jpg" class="img-vs" alt="Human vs Computer"></span>
                 </div>
             </div>
         </div>
         <footer id="copy"><b>up201706894  up201706082</b></footer>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!-----------------Instruction Page------------------------------------>
+    <!--========================= Instruction Page ==========================-->
     <div id="instruction-page" class="overlay bk-color-white-ov">
         <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('instruction-page')">&times;</a>
         <div class="overlay-content">
             <div>
-                <button type="button" class="ov-collapsible"><h1><b>Pieces</b></h1></button>
+                <button type="button" class="ov-collapsible"><b>Pieces</b></button>
                 <div class="ov-content-collapsible">
                     <p>Each piece is rectangular with 2 rectangular parts;</p>
                     <p>Each rectangular part has dotted values ranging from 0 to 6;</p>
@@ -84,11 +84,11 @@
         </div><br>
         <div class="overlay-content">
             <div>
-                <button type="button" class="ov-collapsible"><h1><b>Starting Conditions</b></h1></button>
+                <button type="button" class="ov-collapsible"><b>Starting Conditions</b></button>
                 <div class="ov-content-collapsible">
                     <p>
-                        At the start the pieces are shuffled and distributed in 3 groups:<br> Player
-                        </b> hand;<br><b>Opponent</b> hand;<br><b>Stack</b>;
+                        At the start the pieces are shuffled and distributed in 3 groups:<br>
+                        <b>Player</b> hand;<br><b>Opponent</b> hand;<br><b>Stack</b>;
                     </p>
                     <p>
                         The player that has the <sub class="size-50">&#127073;</sub> piece (highest value piece) starts the game, placing it in the center of the game board;
@@ -98,7 +98,7 @@
         </div><br>
         <div class="overlay-content">
             <div>
-                <button type="button" class="ov-collapsible"><h1><b>Playing</b></h1></button>
+                <button type="button" class="ov-collapsible"><b>Playing</b></button>
                 <div class="ov-content-collapsible">
                     <p>
                         During the game each player will take turns playing;
@@ -114,7 +114,7 @@
         </div><br>
         <div class="overlay-content">
             <div>
-                <button type="button" class="ov-collapsible"><h1><b>Stack</b></h1></button>
+                <button type="button" class="ov-collapsible"><b>Stack</b></button>
                 <div class="ov-content-collapsible">
                     <p>
                         If either one of the players doesn't have any playable piece, he must use the <b>stack</b>. The player will keep on taking pieces until it is possible for him to play;
@@ -127,7 +127,7 @@
         </div><br>
         <div class="overlay-content">
             <div>
-                <button type="button" class="ov-collapsible"><h1><b>Finishing Conditions</b></h1></button>
+                <button type="button" class="ov-collapsible"><b>Finishing Conditions</b></button>
                 <div class="ov-content-collapsible">
                     <p>
                         The game ends when:
@@ -144,20 +144,35 @@
             </div>
         </div><br>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!-----------------LeaderBoard Page------------------------------------>
+    <!--============================== LeaderBoard Page =====================-->
     <div id="leader-page" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('leader-page')">&times;</a>
         <div class="overlay-content">
-            This is the LeaderBoard
+            <div class="center">
+                <h1><b>Leaderboard</b></h1>
+                <br>
+                <div id="PVP" class="results">
+                    <h2>Player VS Player</h2>
+                    <table id="PVP-Table" class="tb-results">
+                    </table>
+                </div>
+                <br><br>
+                <div id="PVA" class="results">
+                    <h2>Player VS Computer</h2>
+                    <table id="PVA-Table" class="tb-results">
+                    </table>
+                </div>
+            </div>
+            <br><br><br>
         </div>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!-----------------Human vs AI----------------------------------------->
+    <!--============================ Human vs AI ============================-->
     <div id="ai-page" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('ai-page')">&times;</a>
         <div class="overlay-content">
@@ -165,13 +180,13 @@
                 <button type="button" id="new-game-ai" onclick="newGame();">New Game</button>
                 <button type="button" id="quit-game-ai" onclick="quitGame();">Quit Game</button>
             </div>
-            <span id="inst-on-game-ai" onclick="openMenu('instruction-page','4');"><img src="Assets/instruct.png" alt="Game Instructions" width="100%"></span>
+            <span id="inst-on-game-ai" onclick="openMenu('instruction-page','4');"><img src="Assets/instruct.png" alt="Game Instructions" class="wd-100"></span>
         </div>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!-----------------Human vs Human-------------------------------------->
+    <!-- ========================== Human vs Human ==========================-->
     <div id="human-page" class="overlay">
         <a href="javascript:void(0)" class="closebtn" onclick="closeMenu('human-page')">&times;</a>
         <div class="overlay-content">
@@ -183,13 +198,13 @@
                 </div>
                 <button type="button" id="quit-game-players" onclick="quitGamePlayers();">Quit Game</button>
             </div>
-            <span id="inst-on-game-players" onclick="openMenu('instruction-page','4');"><img src="Assets/instruct.png" alt="Game Instructions" width="100%"></span>
+            <span id="inst-on-game-players" onclick="openMenu('instruction-page','4');"><img src="Assets/instruct.png" alt="Game Instructions" class="wd-100"></span>
         </div>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!-------------------------------Login--------------------------------->
+    <!-- ========================== Login ===================================-->
     <div id="login-form" class="modal">
         <span onclick="hideLogin();" class="close-login" title="Close Form">&times;</span>
         <!-- Modal Content -->
@@ -199,23 +214,25 @@
             </div>
 
             <div class="login-container">
-                <label for="uname"><b>Username</b></label>
+                <label for="login_username"><b>Username</b></label>
                 <input id="login_username" type="text" placeholder="Enter Username" name="username" required>
 
-                <label for="psw"><b>Password</b></label>
+                <label for="login_password"><b>Password</b></label>
                 <input id="login_password" type="password" placeholder="Enter Password" name="password" required>
                 <button class="submit" type="submit" onclick="executeLogin()">Authenticate</button>
             </div>
 
             <div class="login-container bk-color-white">
-                <button type="button" onclick="hideLogin();" class="login-cancelbtn">Cancel</button>
+                <div class="center">
+                    <button type="button" onclick="hideLogin();" class="login-cancelbtn">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!------------Player taking from stack--------------------------------->
+    <!--=============== Player taking from stack ============================-->
     <div id="taking-from-stack" class="modal">
         <!-- Modal Content -->
         <form class="login-modal-content animate" action="#">
@@ -227,10 +244,10 @@
             </div>
         </form>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!---------------------------Stack Empty Pass-------------------------->
+    <!--======================== Stack Empty Pass ===========================-->
     <div id="empty-stack" class="modal">
         <!-- Modal Content -->
         <form class="login-modal-content animate" action="#">
@@ -245,10 +262,10 @@
             </div>
         </form>
     </div>
-    <!--------------------------------------------------------------------->
+    <!--=====================================================================-->
 
 
-    <!---------------------------Scripts----------------------------------->
+    <!--=========================== Scripts =================================-->
     <script src="Script/Menus/NavMenus.js"></script>
     <!--"redirects"-->
     <script src="Script/Menus/collapsible.js"></script>
