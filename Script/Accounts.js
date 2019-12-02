@@ -137,6 +137,7 @@ function update(user, gameid) {
 
             //It is our turn
             if (TURN == username) {
+                //skipP();
                 var match = checkMatch(data.board.line);
                 console.log("[User: " + username + ', Has Match: ' + match + ']\n');
                 if (match) {
@@ -155,7 +156,7 @@ function update(user, gameid) {
                     if (STACK == 0) {
                         //Stack empty => Pass turn
                         messageUser('starter', 'No piece matches, Stack is empty. Passing turn');
-                        notify(username, password, GAME_ID, undefined, undefined, null);
+                        notify(username, password, GAME_ID, undefined, undefined, tru);
                     } else {
                         //Stack not empty take one piece
                         createStackRetriever();
@@ -175,12 +176,15 @@ function update(user, gameid) {
 function notify(user, pass, gameid, side, piece, skip) {
     const url = BASE_URL + 'notify';
     const input = { 'nick': user, 'pass': pass, 'game': gameid };
-    console.log(piece);
+    if (skip != undefined) {
+        input['skip'] = null;
+        console.log('THIS=================');
+    } else {
+        if (piece != undefined) input['piece'] = piece;
+        if (side != undefined) input['side'] = side;
+    }
+    console.log(input);
 
-    if (piece != undefined) input['piece'] = piece;
-    if (side != undefined) input['side'] = side;
-
-    if (skip != undefined) input['skip'] = skip;
     dataPost(url, input)
         .then(data => {
             console.log("Notify: " + JSON.stringify(data));
@@ -206,7 +210,7 @@ function notify(user, pass, gameid, side, piece, skip) {
                 }
                 // notify {}
                 else {
-                    if (piece) {
+                    if (skip != undefined) {} else if (piece != undefined) {
                         [rec1, rec2, p] = extractPieceParts(piece);
                         PLAYER.hand.delete(p);
                     }

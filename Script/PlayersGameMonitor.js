@@ -43,6 +43,17 @@ function clickPossible(p_obj) {
     }
 }
 
+function skipP() {
+    var str = "<span id=\"skip-t\" style=\"display:flex; justify-content: center;align-items: baseline; height:3vh; font-size:3vw\"><button type=\"button\" class=\"login-cancelbtn\">Skip</button></span>";
+    generateHtml(document.getElementById('Player-Stack-player'), str);
+    var stk = document.getElementById('skip-t');
+    stk.style.filter = 'invert(100%)';
+    stk.onclick = function() {
+        document.getElementById('Player-Stack-player').removeChild(document.getElementById('skip-t'));
+        notify(username, password, GAME_ID, undefined, undefined, true);
+
+    }
+}
 
 function codePosition(r1, r2, code) {
     if (r1 == r2) return '0';
